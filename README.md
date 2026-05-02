@@ -1,10 +1,10 @@
-# Trade Hub System
+Trade Hub System
 
 A console-based marketplace application written in C that allows students to buy and sell school-related items such as uniforms, books, and school supplies.
 
 ---
 
-## Overview
+Overview
 
 Trade Hub is a terminal-based system designed for students who want to trade school items within their campus community. It supports two roles:
 
@@ -15,7 +15,7 @@ The system features a menu-driven ASCII console interface with full marketplace 
 
 ---
 
-## Data Structures and Algorithms Used
+Data Structures and Algorithms Used
 
 | Data Structure / Algorithm | Module | Feature It Supports |
 |---|---|---|
@@ -28,7 +28,7 @@ The system features a menu-driven ASCII console interface with full marketplace 
 
 ---
 
-## Project Structure
+Project Structure
 
 ```
 trade-hub-system/
@@ -43,18 +43,18 @@ trade-hub-system/
 
 ---
 
-## How to Compile and Run
+How to Compile and Run
 
-### Requirements
+Requirements
 - GCC compiler (MinGW for Windows)
 
-### Compile
+Compile
 
 ```bash
 gcc main.c catalog.c cart.c queue.c stack.c hash.c utils.c -o trade_hub
 ```
 
-### Run
+Run
 
 **Windows:**
 ```bash
@@ -68,7 +68,7 @@ trade_hub.exe
 
 ---
 
-## Developed By
+Developed By:
 
 - Beraquit, Jinky
 - Lorio, Angelo
