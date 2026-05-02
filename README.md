@@ -82,8 +82,7 @@ CC104 — Data Structures and Algorithms
 
 ## AI Acknowledgment
 
-AI Tool Used: Claude AI (claude.ai)
-
+### Claude AI (claude.ai)
 Prompts Used:
 - Generate a console-based marketplace system in C using data structures
 - Implement hash table for item search
@@ -93,3 +92,9 @@ Prompts Used:
 
 How the output was adapted:
 The generated code was reviewed, tested, and modified to fit the requirements of the Trade Hub System. Bugs were fixed manually, modules were integrated together, and the UI flow was adjusted based on actual testing.
+
+### Cursor AI (Cursor Editor)
+Used as an AI-powered code editor that provided inline code suggestions, auto-completions, and code generation directly while writing the source code of the Trade Hub System.
+
+### GitHub Copilot (VS Code)
+Used inside Visual Studio Code to assist with inline code completions and suggestions while developing and debugging the Trade Hub System modules.
