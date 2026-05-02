@@ -1,60 +1,60 @@
 # Trade Hub System
 
-A console-based marketplace application written in C that allows students to buy and sell school-related items such as uniforms, books, and school supplies.
+A simple marketplace program written in C where students can buy and sell school items like uniforms, books, and supplies.
 
 ---
 
 ## Overview
 
-Trade Hub is a terminal-based system designed for students who want to trade school items within their campus community. It supports two roles:
+Trade Hub is a program that runs in the terminal. It lets students trade school items with each other. There are two roles:
 
-- **Buyer** — Browse the catalog, search for items, add to cart, and place orders
-- **Seller** — List items for sale, manage inventory, and view transaction history
+- **Buyer** — Look at items, search for what you need, add to cart, and place an order
+- **Seller** — Add items for sale, manage your listings, and see your sales history
 
-The system features a menu-driven ASCII console interface with full marketplace functionality.
+The program uses a text-based menu that you navigate by typing numbers.
 
 ---
 
 ## Data Structures and Algorithms Used
 
-| Data Structure / Algorithm | Module | Feature It Supports |
+| Data Structure / Algorithm | File | What It Does |
 |---|---|---|
-| Linked List | `catalog.c` | Stores and manages the product catalog dynamically |
-| Hash Table | `hash.c` | Fast item lookup and search by item ID |
-| Queue | `queue.c` | Manages buyer order queue (FIFO processing) |
-| Stack | `stack.c` | Tracks transaction history (undo/view last actions) |
+| Linked List | `catalog.c` | Stores the list of items for sale |
+| Hash Table | `hash.c` | Quickly finds an item by its ID |
+| Queue | `queue.c` | Handles buyer orders one by one (first come, first served) |
+| Stack | `stack.c` | Keeps track of past transactions |
 | Sorting Algorithm | `catalog.c` | Sorts items by price or name |
-| Search Algorithm | `catalog.c` / `hash.c` | Linear and hash-based item search |
+| Search Algorithm | `catalog.c` / `hash.c` | Searches for items in the catalog |
 
 ---
 
-## Project Structure
+## Project Files
 
 ```
 trade-hub-system/
-├── main.c          # Entry point, main menu
-├── catalog.c/h     # Product catalog using linked list
-├── cart.c/h        # Shopping cart management
-├── queue.c/h       # Order queue (FIFO)
-├── stack.c/h       # Transaction history (LIFO)
-├── hash.c/h        # Hash table for item search
-└── utils.c/h       # Utility/helper functions
+├── main.c          # Starts the program, shows the main menu
+├── catalog.c/h     # List of items using linked list
+├── cart.c/h        # Shopping cart
+├── queue.c/h       # Order queue
+├── stack.c/h       # Transaction history
+├── hash.c/h        # Item search using hash table
+└── utils.c/h       # Helper functions
 ```
 
 ---
 
 ## How to Compile and Run
 
-### Requirements
+### What You Need
 - GCC compiler (MinGW for Windows)
 
-### Compile
+### Step 1: Compile
 
 ```bash
 gcc main.c catalog.c cart.c queue.c stack.c hash.c utils.c -o trade_hub
 ```
 
-### Run
+### Step 2: Run
 
 **Windows:**
 ```bash
@@ -76,25 +76,27 @@ trade_hub.exe
 - Salud, Sandara
 
 Central Bicol State University of Agriculture — Sipocot (CBSUA-SIPOCOT)  
-CC104 — Data Structures and Algorithms  
+CC104 — Data Structures and Algorithms
 
 ---
 
-## AI Acknowledgment
+## AI Tools Used
 
 ### Claude AI (claude.ai)
-Prompts Used:
-- Generate a console-based marketplace system in C using data structures
-- Implement hash table for item search
-- Implement queue for order management
-- Implement stack for transaction history
-- Design ASCII console UI for buyer and seller roles
+We used Claude to help plan and generate parts of the code.
 
-How the output was adapted:
-The generated code was reviewed, tested, and modified to fit the requirements of the Trade Hub System. Bugs were fixed manually, modules were integrated together, and the UI flow was adjusted based on actual testing.
+Prompts we used:
+- Build a marketplace system in C using data structures
+- Add a hash table for searching items
+- Add a queue for managing orders
+- Add a stack for transaction history
+- Design a text-based menu for buyer and seller
+
+What we changed:
+We checked the code, tested it, and fixed bugs. We also put all the parts together and adjusted the program based on what worked during testing.
 
 ### Cursor AI (Cursor Editor)
-Used as an AI-powered code editor that provided inline code suggestions, auto-completions, and code generation directly while writing the source code of the Trade Hub System.
+We used Cursor as our code editor. It helped by suggesting code while we were typing.
 
 ### GitHub Copilot (VS Code)
-Used inside Visual Studio Code to assist with inline code completions and suggestions while developing and debugging the Trade Hub System modules.
+We also used GitHub Copilot inside VS Code. It helped complete some parts of the code while we were writing and fixing it.
