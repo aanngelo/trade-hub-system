@@ -77,3 +77,19 @@ trade_hub.exe
 
 Central Bicol State University of Agriculture — Sipocot (CBSUA-SIPOCOT)  
 CC104 — Data Structures and Algorithms  
+
+---
+
+## AI Acknowledgment
+
+AI Tool Used: Claude AI (claude.ai)
+
+Prompts Used:
+- Generate a console-based marketplace system in C using data structures
+- Implement hash table for item search
+- Implement queue for order management
+- Implement stack for transaction history
+- Design ASCII console UI for buyer and seller roles
+
+How the output was adapted:
+The generated code was reviewed, tested, and modified to fit the requirements of the Trade Hub System. Bugs were fixed manually, modules were integrated together, and the UI flow was adjusted based on actual testing.
