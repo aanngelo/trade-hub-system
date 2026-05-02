@@ -70,6 +70,10 @@ trade_hub.exe
 
 ## Developed By
 
-Angelo Lorio  
-Central Bicol State University of Agriculture  
+- Beraquit, Jinky
+- Lorio, Angelo
+- Montañez, April Ann
+- Salud, Sandara
+
+Central Bicol State University of Agriculture — Sipocot (CBSUA-SIPOCOT)  
 CC104 — Data Structures and Algorithms  
