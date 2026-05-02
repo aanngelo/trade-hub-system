@@ -68,7 +68,7 @@ trade_hub.exe
 
 ---
 
-Developed By:
+# Developed By
 
 - Beraquit, Jinky
 - Lorio, Angelo
