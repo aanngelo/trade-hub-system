@@ -1,6 +1,6 @@
 # Trade Hub System
-
-A simple marketplace program written in C where students can buy and sell school items like uniforms, books, and supplies.
+---
+Trade Hub is a console-based marketplace system designed for students who need a simple and organized way to buy and sell school items within their campus community. Instead of looking for buyers or sellers one by one, students can use Trade Hub as a single place where they can post items they want to sell or look for items they need to buy. It covers common school items such as uniforms, books, notebooks, and other academic supplies. The goal of Trade Hub is to make student-to-student trading more convenient, organized, and accessible for everyone in the campus.
 
 ---
 
@@ -68,12 +68,12 @@ trade_hub.exe
 
 ---
 
-## Developed By
+## Developed By;
 
-- Beraquit, Jinky
-- Lorio, Angelo
-- Montañez, April Ann
-- Salud, Sandara
+- Beraquit, Jinky SD.
+- Lorio, Angelo C.
+- Montañez, April Anne D.
+- Salud, Sandara F.
 
 Central Bicol State University of Agriculture — Sipocot (CBSUA-SIPOCOT)  
 CC104 — Data Structures and Algorithms
@@ -83,20 +83,7 @@ CC104 — Data Structures and Algorithms
 ## AI Tools Used
 
 ### Claude AI (claude.ai)
-We used Claude to help plan and generate parts of the code.
-
-Prompts we used:
-- Build a marketplace system in C using data structures
-- Add a hash table for searching items
-- Add a queue for managing orders
-- Add a stack for transaction history
-- Design a text-based menu for buyer and seller
-
-What we changed:
-We checked the code, tested it, and fixed bugs. We also put all the parts together and adjusted the program based on what worked during testing.
-
-### Cursor AI (Cursor Editor)
-We used Cursor as our code editor. It helped by suggesting code while we were typing.
+We used Claude to help plan and generate parts of the code. We checked the code, tested it, and fixed bugs. We also put all the parts together and adjusted the program based on what worked during testing.
 
 ### GitHub Copilot (VS Code)
 We also used GitHub Copilot inside VS Code. It helped complete some parts of the code while we were writing and fixing it.
