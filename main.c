@@ -12,8 +12,9 @@
 /* User authentication structures */
 typedef struct User
 {
-    char username[50];
+
     char password[50];
+    char username[50];
     char display_name[50];  /* Display name for menus */
     char role; /* 'S' = Seller, 'B' = Buyer */
     struct User *next;
@@ -120,13 +121,13 @@ int main(void)
     UserHashTable user_ht;
     User *current_user = NULL;
 
-    init_catalog(&catalog);
-    init_queue(&queue);
-    init_stack(&history);
-    init_hash_table(&ht);
-    init_cart(&cart);
-    init_user_list(&users);
-    init_user_hash(&user_ht);
+    int_catalog(&catalog);
+    int_queue(&queue);
+    int_stack(&history);
+    int_hash_table(&ht);
+    int_cart(&cart);
+    int_user_list(&users);
+    int_user_hash(&user_ht);
 
     seed_demo_users(&users, &user_ht);
     seed_demo_catalog(&catalog, &ht);
@@ -1078,7 +1079,7 @@ void seller_view_listings(Catalog *catalog, InquiryQueue *q, HashTable *ht, User
         printf("================================================================================\n");
         printf("  Enter choice [0-Back]: ");
 
-        char choice;
+      char choice;
         if (scanf(" %c", &choice) != 1)
         {
             clear_input_buffer();
