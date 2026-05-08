@@ -121,13 +121,13 @@ int main(void)
     UserHashTable user_ht;
     User *current_user = NULL;
 
-    init_catalog(&catalog);
-    init_queue(&queue);
-    init_stack(&history);
-    init_hash_table(&ht);
-    init_cart(&cart);
-    init_user_list(&users);
-    init_user_hash(&user_ht);
+    int_catalog(&catalog);
+    int_queue(&queue);
+    int_stack(&history);
+    int_hash_table(&ht);
+    int_cart(&cart);
+    int_user_list(&users);
+    int_user_hash(&user_ht);
 
     seed_demo_users(&users, &user_ht);
     seed_demo_catalog(&catalog, &ht);
