@@ -1,8 +1,8 @@
+#include "hash.h"
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include "hash.h"
 
 /* ============================================================
    hash.c — Trade Hub System
@@ -21,7 +21,7 @@ int hash_category(const char *category) {
     unsigned long hash = 5381;
     int c;
 
-    /* djb2 algorithm: hash = hash * 33 + char */
+    // djb2 algorithm: hash = hash * 33 + char
     while ((c = tolower((unsigned char)*category++))) {
         hash = ((hash << 5) + hash) + c;
     }
@@ -48,11 +48,11 @@ void init_hash_table(HashTable *ht) {
 void ht_insert(HashTable *ht, const char *category, int item_id) {
     int index = hash_category(category);
 
-    /* Search for existing category node in this bucket */
+    // Search for existing category node in this bucket
     HashNode *current = ht->buckets[index];
     while (current != NULL) {
         if (strcasecmp(current->category, category) == 0) {
-            /* Category found — add item ID if space allows */
+    // Category found — add item ID if space allows
             if (current->count < MAX_IDS) {
                 current->item_ids[current->count++] = item_id;
             } else {
@@ -63,7 +63,7 @@ void ht_insert(HashTable *ht, const char *category, int item_id) {
         current = current->next;
     }
 
-    /* Category not found — create a new HashNode */
+    // Category not found — create a new HashNode
     HashNode *new_node = (HashNode *)malloc(sizeof(HashNode));
     if (!new_node) {
         printf("[ERROR] Memory allocation failed.\n");
@@ -72,11 +72,11 @@ void ht_insert(HashTable *ht, const char *category, int item_id) {
 
     strncpy(new_node->category, category, sizeof(new_node->category) - 1);
     new_node->item_ids[0] = item_id;
-    new_node->count       = 1;
+    new_node->count = 1;
 
-    /* Chain it at the front of this bucket */
-    new_node->next         = ht->buckets[index];
-    ht->buckets[index]     = new_node;
+    // Chain it at the front of this bucket
+    new_node->next = ht->buckets[index];
+    ht->buckets[index] = new_node;
 }
 
 /* ----------------------------------------------------------
@@ -85,7 +85,7 @@ void ht_insert(HashTable *ht, const char *category, int item_id) {
    Returns NULL if the category does not exist.
    ---------------------------------------------------------- */
 HashNode *ht_lookup(HashTable *ht, const char *category) {
-    int       index   = hash_category(category);
+    int index = hash_category(category);
     HashNode *current = ht->buckets[index];
 
     while (current != NULL) {
@@ -105,12 +105,13 @@ HashNode *ht_lookup(HashTable *ht, const char *category) {
    ---------------------------------------------------------- */
 void ht_remove(HashTable *ht, const char *category, int item_id) {
     HashNode *node = ht_lookup(ht, category);
-    if (!node) return;
+    if (!node)
+        return;
 
-    /* Find and remove the item ID from the array */
+    // Find and remove the item ID from the array
     for (int i = 0; i < node->count; i++) {
         if (node->item_ids[i] == item_id) {
-            /* Shift remaining IDs left */
+    // Shift remaining IDs left
             for (int j = i; j < node->count - 1; j++) {
                 node->item_ids[j] = node->item_ids[j + 1];
             }
@@ -125,38 +126,33 @@ void ht_remove(HashTable *ht, const char *category, int item_id) {
    Prints all categories and how many items are indexed.
    ---------------------------------------------------------- */
 void display_hash_table(HashTable *ht) {
-    printf("================================================================================\n");
-    printf("|                                 Category Index                               |\n");
-    printf("================================================================================\n");
+    printf("==================================================================="
+           "=============\n");
+    printf("|                                 Category Index                   "
+           "            |\n");
+    printf("==================================================================="
+           "=============\n");
     printf("  No.   Category             Total Listings     Description\n");
-    printf("  ------------------------------------------------------------------------------\n");
+    printf("  "
+           "-------------------------------------------------------------------"
+           "-----------\n");
 
     int category_num = 1;
     int total_items = 0;
 
-    /* Define category descriptions */
+    // Define category descriptions
     const char *descriptions[] = {
-        "Blouse, Skirt, Pants, PE Uniform",
-        "Notebooks, Pens, Art Materials",
-        "Textbooks, Reviewers, Novels",
-        "Miscellaneous Items"
-    };
-    
-    const char *category_names[] = {
-        "Uniform",
-        "Supply",
-        "Books",
-        "Other"
-    };
+        "Blouse, Skirt, Pants, PE Uniform", "Notebooks, Pens, Art Materials",
+        "Textbooks, Reviewers, Novels", "Miscellaneous Items"};
 
-    /* Display all categories */
+    // Display all categories
     for (int i = 0; i < TABLE_SIZE; i++) {
         HashNode *current = ht->buckets[i];
         while (current != NULL) {
             int count = current->count;
             total_items += count;
-            
-            /* Find the description for this category */
+
+    // Find the description for this category
             const char *desc = "N/A";
             if (strcmp(current->category, "uniform") == 0)
                 desc = descriptions[0];
@@ -166,18 +162,22 @@ void display_hash_table(HashTable *ht) {
                 desc = descriptions[2];
             else if (strcmp(current->category, "other") == 0)
                 desc = descriptions[3];
-            
-            printf("  [%-2d] %-20s%d item(s)          %s\n",
-                   category_num, current->category, count, desc);
+
+            printf("  [%-2d] %-20s%d item(s)          %s\n", category_num,
+                   current->category, count, desc);
             category_num++;
             current = current->next;
         }
     }
 
-    printf("  ------------------------------------------------------------------------------\n");
-    printf("         Total Categories: %-2d              Total Listings: %d item(s)         \n", 
+    printf("  "
+           "-------------------------------------------------------------------"
+           "-----------\n");
+    printf("         Total Categories: %-2d              Total Listings: %d "
+           "item(s)         \n",
            category_num - 1, total_items);
-    printf("================================================================================\n");
+    printf("==================================================================="
+           "=============\n");
 }
 
 /* ----------------------------------------------------------

@@ -9,11 +9,12 @@
 #include "cart.h"
 #include "utils.h"
 
-/* User authentication structures */
+    // User authentication structures
 typedef struct User
 {
-    char username[50];
+
     char password[50];
+    char username[50];
     char display_name[50];  /* Display name for menus */
     char role; /* 'S' = Seller, 'B' = Buyer */
     struct User *next;
@@ -53,7 +54,7 @@ typedef struct UserHashTable
      - Selection Sort  (catalog.c — sort_by_name)
    ============================================================ */
 
-/* --- Forward declarations for menu functions --- */
+    // --- Forward declarations for menu functions ---
 void main_menu(Catalog *catalog, InquiryQueue *q,
                TxStack *stack, HashTable *ht, ShoppingCart *cart, User *user);
 void seller_menu(Catalog *catalog, InquiryQueue *q,
@@ -63,14 +64,14 @@ void browse_menu(Catalog *catalog);
 int display_inquiries_for_seller(InquiryQueue *q, const char *seller_name);
 InquiryNode *get_seller_inquiry_by_index(InquiryQueue *q, const char *seller_name, int index);
 
-/* --- Forward declarations for seller features --- */
+    // --- Forward declarations for seller features ---
 void seller_add_item_step_by_step(Catalog *catalog, InquiryQueue *q, HashTable *ht, User *user);
 void seller_view_listings(Catalog *catalog, InquiryQueue *q, HashTable *ht, User *user);
 void seller_remove_item(Catalog *catalog, InquiryQueue *q, User *user);
 void seller_update_item(Catalog *catalog, InquiryQueue *q, User *user);
 static int validate_contact(const char *contact); /* (+63) or +63 then 10 digits */
 
-/* --- Forward declarations for user auth --- */
+    // --- Forward declarations for user auth ---
 int startup_menu(UserList *users, UserHashTable *user_ht, User **current_user);
 void init_user_list(UserList *list);
 void init_user_hash(UserHashTable *ht);
@@ -110,7 +111,7 @@ static int prompt_quantity(void)
    ============================================================ */
 int main(void)
 {
-    /* Initialize all data structures */
+    // Initialize all data structures
     Catalog catalog;
     InquiryQueue queue;
     TxStack history;
@@ -131,7 +132,7 @@ int main(void)
     seed_demo_users(&users, &user_ht);
     seed_demo_catalog(&catalog, &ht);
 
-    /* Startup menu loop */
+    // Startup menu loop
     while (1)
     {
         int choice = startup_menu(&users, &user_ht, &current_user);
@@ -152,7 +153,7 @@ int main(void)
         }
     }
 
-    /* Free all allocated memory before exit */
+    // Free all allocated memory before exit
     free_catalog(&catalog);
     free_queue(&queue);
     free_stack(&history);
@@ -598,7 +599,7 @@ int startup_menu(UserList *users, UserHashTable *user_ht, User **current_user)
             {
                 return 1; /* user logged in successfully */
             }
-            /* otherwise return to startup menu */
+    // otherwise return to startup menu
         }
         else if (choice == 2)
         {
@@ -607,7 +608,7 @@ int startup_menu(UserList *users, UserHashTable *user_ht, User **current_user)
             {
                 return 1; /* user registered and logged in successfully */
             }
-            /* otherwise return to startup menu */
+    // otherwise return to startup menu
         }
         else if (choice == 0)
         {
@@ -655,7 +656,7 @@ int login_user(UserHashTable *ht, User **user)
         *user = user_ht_lookup(ht, username);
         if (*user != NULL && strcmp((*user)->password, password) == 0)
         {
-            /* Login successful */
+    // Login successful
             print_login_header();
             printf("  Welcome back, %s!\n", (*user)->display_name);
             char role_str[20] = "";
@@ -675,7 +676,7 @@ int login_user(UserHashTable *ht, User **user)
             attempt++;
             if (attempt >= max_attempts)
             {
-                /* Max attempts reached - return to startup */
+    // Max attempts reached - return to startup
                 return 0;
             }
             
@@ -774,7 +775,7 @@ int register_user(UserList *users, UserHashTable *ht, User **user)
     printf("\n");
     printf("================================================================================\n");
 
-    /* Create the new user */
+    // Create the new user
     *user = add_user(users, ht, username, password, display_name, role);
     if (!*user)
     {
@@ -782,7 +783,7 @@ int register_user(UserList *users, UserHashTable *ht, User **user)
         return 0;
     }
 
-    /* Registration successful */
+    // Registration successful
     print_register_header();
     printf("  Account created successfully!\n");
     printf("  Welcome to Trade Hub, %s!\n", display_name);
@@ -917,8 +918,7 @@ void main_menu(Catalog *catalog, InquiryQueue *q,
                     {
                         continue;
                     }
-                    int cat_idx = atoi(cat_input);
-                    /* TODO: Add browse category functionality */
+    // TODO: Add browse category functionality
                     printf("  [INFO] Browse Category feature coming soon.\n");
                     printf("  Press Enter to continue...");
                     char dummy[32];
@@ -944,7 +944,7 @@ void main_menu(Catalog *catalog, InquiryQueue *q,
    SELLER MENU
    ============================================================ */
 
-/* --- Forward declarations for seller functions --- */
+    // --- Forward declarations for seller functions ---
 void seller_view_listings(Catalog *catalog, InquiryQueue *q, HashTable *ht, User *user);
 void seller_remove_item(Catalog *catalog, InquiryQueue *q, User *user);
 int count_pending_orders_for_item(InquiryQueue *q, int item_id);
@@ -965,6 +965,7 @@ void seller_menu(Catalog *catalog, InquiryQueue *q,
         printf("  [2] View My Listings\n");
         printf("  [3] View Incoming Orders\n");
         printf("  [4] Sales History\n");
+        printf("  [5] Logout\n");
         printf("\n  Enter choice [0-Back]: ");
 
         if (scanf("%d", &choice) != 1)
@@ -977,39 +978,53 @@ void seller_menu(Catalog *catalog, InquiryQueue *q,
 
         if (choice == 1)
         {
-            /* --- Add Product --- */
+    // --- Add Product ---
             seller_add_item_step_by_step(catalog, q, ht, user);
         }
         else if (choice == 2)
         {
-            /* --- View My Listings --- */
+    // --- View My Listings ---
             seller_view_listings(catalog, q, ht, user);
         }
         else if (choice == 3)
         {
-            /* --- View Incoming Orders (new flow) --- */
+    // --- View Incoming Orders (new flow) ---
             seller_view_incoming_orders(catalog, stack, user);
         }
         else if (choice == 4)
         {
-            /* --- Sales History --- */
+    // --- Sales History ---
             seller_sales_history(stack, user);
+        }
+        else if (choice == 5)
+        {
+    // --- Logout ---
+            printf("Are you sure you want to logout? (y/n): ");
+            char confirm[10];
+            if (fgets(confirm, sizeof(confirm), stdin))
+            {
+                trim_input(confirm);
+                if (confirm[0] == 'y' || confirm[0] == 'Y')
+                {
+                    break;
+                }
+            }
         }
         else if (choice == 0)
         {
-            /* --- Back to Main Menu --- */
+    // --- Back to Main Menu ---
             break;
         }
         else
         {
-            printf("  [ERROR] Invalid choice. Please select 1, 2, 3, 4, or 0.\n");
+            printf("  [ERROR] Invalid choice. Please select 1, 2, 3, 4, 5, or 0.\n");
             printf("  Press any key to continue...");
             getchar();
         }
     } while (choice != 0);
 }
 
-/* --- Seller View Listings with Options --- */
+    // --- Seller View Listings with Options ---
 void seller_view_listings(Catalog *catalog, InquiryQueue *q, HashTable *ht, User *user)
 {
     while (1)
@@ -1078,7 +1093,7 @@ void seller_view_listings(Catalog *catalog, InquiryQueue *q, HashTable *ht, User
         printf("================================================================================\n");
         printf("  Enter choice [0-Back]: ");
 
-        char choice;
+      char choice;
         if (scanf(" %c", &choice) != 1)
         {
             clear_input_buffer();
@@ -1113,7 +1128,7 @@ void seller_view_listings(Catalog *catalog, InquiryQueue *q, HashTable *ht, User
     }
 }
 
-/* --- Seller Remove Item Flow --- */
+    // --- Seller Remove Item Flow ---
 void seller_remove_item(Catalog *catalog, InquiryQueue *q, User *user)
 {
     print_centered_header("REMOVE ITEM");
@@ -1291,7 +1306,7 @@ void seller_remove_item(Catalog *catalog, InquiryQueue *q, User *user)
     }
 }
 
-/* --- Seller Update Item Flow --- */
+    // --- Seller Update Item Flow ---
 void seller_update_item(Catalog *catalog, InquiryQueue *q, User *user)
 {
     char input[128];
@@ -1333,7 +1348,7 @@ void seller_update_item(Catalog *catalog, InquiryQueue *q, User *user)
     if (!selected_item)
         return;
 
-    /* Working copy until user confirms save. */
+    // Working copy until user confirms save.
     char new_title[100];
     char new_category[50];
     char new_condition[20];
@@ -1660,7 +1675,7 @@ static int order_filter_matches(OrderFilter filter, const char *status)
         return 0;
     if (filter == ORDER_FILTER_PENDING && strcasecmp(status, "Pending") == 0)
         return 1;
-    /* Orders can be marked "Received" by the buyer; treat them as Completed for seller filtering. */
+    // Orders can be marked "Received" by the buyer; treat them as Completed for seller filtering.
     if (filter == ORDER_FILTER_COMPLETED &&
         (strcasecmp(status, "Completed") == 0 || strcasecmp(status, "Received") == 0))
         return 1;
@@ -1673,7 +1688,7 @@ static const char *seller_display_status(const char *status)
 {
     if (!status)
         return "";
-    /* Hide intermediate "Received" from seller UI by showing it as Completed. */
+    // Hide intermediate "Received" from seller UI by showing it as Completed.
     if (strcasecmp(status, "Received") == 0)
         return "Completed";
     return status;
@@ -1699,14 +1714,14 @@ static void mark_sold_silent(Catalog *catalog, int item_id)
 
 static void format_money_php(float amount, char *out, size_t out_size)
 {
-    /* amount is assumed to be total price; we print PHP with comma separators. */
+    // amount is assumed to be total price; we print PHP with comma separators.
     long long cents = (long long)(amount * 100.0 + (amount >= 0 ? 0.5 : -0.5));
     long long abs_cents = cents >= 0 ? cents : -cents;
     long long int_part = abs_cents / 100;
     int frac = (int)(abs_cents % 100);
 
     char int_str[64];
-    /* Avoid platform-specific printf modifiers (e.g., %lld). */
+    // Avoid platform-specific printf modifiers (e.g., %lld).
     {
         unsigned long long u = (unsigned long long)int_part;
         if (u == 0)
@@ -1759,7 +1774,7 @@ static const char *qty_label(int qty)
 
 static void format_date_readable(const char *input, char *out, size_t out_size)
 {
-    /* Convert "YYYY-MM-DD HH:MM" to "April 28, 2026  10:30 AM". */
+    // Convert "YYYY-MM-DD HH:MM" to "April 28, 2026  10:30 AM".
     int year = 0, month = 0, day = 0, hour = 0, minute = 0;
     if (!input || !out)
     {
@@ -1876,7 +1891,7 @@ static void update_order_status_for_seller(TxStack *stack,
 
         if (mark_item_sold)
         {
-            /* Mark representative listing as sold to keep catalog consistent. */
+    // Mark representative listing as sold to keep catalog consistent.
             mark_sold_silent(catalog, current->item_id);
         }
     }
@@ -1916,7 +1931,7 @@ void seller_view_incoming_orders(Catalog *catalog, TxStack *stack, User *user)
 
         int row_count = collect_incoming_order_rows(stack, seller_key1, seller_key2, filter, rows, 200);
 
-        /* --- STEP 6: No incoming orders --- */
+    // --- STEP 6: No incoming orders ---
         if (row_count <= 0 && filter == ORDER_FILTER_ALL)
         {
             print_centered_header("INCOMING ORDERS");
@@ -1940,7 +1955,7 @@ void seller_view_incoming_orders(Catalog *catalog, TxStack *stack, User *user)
             }
         }
 
-        /* --- STEP 1 / STEP 5: Incoming orders list --- */
+    // --- STEP 1 / STEP 5: Incoming orders list ---
         const char *showing_label = NULL;
         if (filter == ORDER_FILTER_PENDING)
         {
@@ -1961,7 +1976,7 @@ void seller_view_incoming_orders(Catalog *catalog, TxStack *stack, User *user)
         }
         else
         {
-            /* Match requested title style. */
+    // Match requested title style.
             if (filter == ORDER_FILTER_PENDING)
                 print_centered_header("INCOMING ORDERS (PENDING ONLY)");
             else if (filter == ORDER_FILTER_COMPLETED)
@@ -1973,7 +1988,7 @@ void seller_view_incoming_orders(Catalog *catalog, TxStack *stack, User *user)
         printf("  Logged in as: %s (Seller)\n", user->display_name);
         printf("--------------------------------------------------------------------------------\n");
 
-        /* If the selected filter yields no rows, show the same STEP 6 empty state. */
+    // If the selected filter yields no rows, show the same STEP 6 empty state.
         if (row_count <= 0)
         {
             printf("\n                      No incoming orders yet.\n");
@@ -1996,7 +2011,7 @@ void seller_view_incoming_orders(Catalog *catalog, TxStack *stack, User *user)
         printf("  No.  Order ID   Product Name     Buyer             Qty    Total        Status\n");
         printf("  ------------------------------------------------------------------------------\n");
 
-        /* Totals and status counts are only shown in STEP 1 (All Orders). */
+    // Totals and status counts are only shown in STEP 1 (All Orders).
         int pending_count = 0, completed_count = 0, cancelled_count = 0;
         if (filter == ORDER_FILTER_ALL)
         {
@@ -2067,7 +2082,7 @@ void seller_view_incoming_orders(Catalog *catalog, TxStack *stack, User *user)
         }
         else if (choice == 'F')
         {
-            /* STEP 5 filter menu */
+    // STEP 5 filter menu
             print_centered_header("INCOMING ORDERS");
             printf("  Filter by Status:\n");
             printf("--------------------------------------------------------------------------------\n");
@@ -2110,7 +2125,7 @@ void seller_view_incoming_orders(Catalog *catalog, TxStack *stack, User *user)
 
             IncomingOrderRow *picked = &rows[sel - 1];
 
-            /* --- STEP 2: View order detail --- */
+    // --- STEP 2: View order detail ---
             char date_buf[64];
             format_date_readable(picked->date, date_buf, sizeof(date_buf));
 
@@ -2160,7 +2175,7 @@ void seller_view_incoming_orders(Catalog *catalog, TxStack *stack, User *user)
             {
                 if (strcasecmp(picked->status, "Pending") != 0)
                 {
-                    /* --- STEP 4: Cannot process --- */
+    // --- STEP 4: Cannot process ---
                     printf("================================================================================\n");
                     printf("  !! CANNOT PROCESS ORDER\n");
                     printf("================================================================================\n");
@@ -2182,7 +2197,7 @@ void seller_view_incoming_orders(Catalog *catalog, TxStack *stack, User *user)
                     continue;
                 }
 
-                /* --- STEP 3: Confirm accept/decline --- */
+    // --- STEP 3: Confirm accept/decline ---
                 const int is_accept = (detail_choice == 'A');
                 const char *target_status = is_accept ? "Awaiting Confirmation" : "Cancelled";
 
@@ -2211,11 +2226,11 @@ void seller_view_incoming_orders(Catalog *catalog, TxStack *stack, User *user)
 
                 update_order_status_for_seller(stack, catalog, seller_key1, seller_key2, picked->order_id, target_status, is_accept);
 
-                /* Update picked for screen rendering. */
+    // Update picked for screen rendering.
                 strncpy(picked->status, target_status, sizeof(picked->status) - 1);
                 picked->status[sizeof(picked->status) - 1] = '\0';
 
-                /* --- Post-confirm success screen --- */
+    // --- Post-confirm success screen ---
                 printf("================================================================================\n");
                 printf("                               %s ORDER\n", is_accept ? "ACCEPT" : "DECLINE");
                 printf("================================================================================\n");
@@ -2249,7 +2264,7 @@ void seller_view_incoming_orders(Catalog *catalog, TxStack *stack, User *user)
                 post_choice = (char)toupper((unsigned char)post_choice);
                 if (post_choice == 'B' || post_choice == '0')
                     return;
-                /* V: go back to list (reset to All for a clean view like sample). */
+    // V: go back to list (reset to All for a clean view like sample).
                 filter = ORDER_FILTER_ALL;
                 continue;
             }
@@ -2258,7 +2273,7 @@ void seller_view_incoming_orders(Catalog *catalog, TxStack *stack, User *user)
         }
         else if (choice == 'A' || choice == 'D')
         {
-            /* Accept/Decline from list (not shown in sample flow, but required by menu keys). */
+    // Accept/Decline from list (not shown in sample flow, but required by menu keys).
             printf("  Enter No. to %s [0-Back]: ", choice == 'A' ? "Accept" : "Decline");
             int sel = read_int_line();
             if (sel <= 0 || sel > row_count)
@@ -2454,7 +2469,7 @@ void seller_sales_history(TxStack *stack, User *user)
             {
                 rows[idx].quantity += current->quantity;
                 rows[idx].total += current->price;
-                /* Keep first item/condition/unit price for display simplicity. */
+    // Keep first item/condition/unit price for display simplicity.
             }
         }
 
@@ -2472,7 +2487,7 @@ void seller_sales_history(TxStack *stack, User *user)
             }
         }
 
-        /* --- No sales history --- */
+    // --- No sales history ---
         if (row_count <= 0)
         {
             print_centered_header("SALES HISTORY");
@@ -2492,7 +2507,7 @@ void seller_sales_history(TxStack *stack, User *user)
             continue;
         }
 
-        /* --- Sales history list --- */
+    // --- Sales history list ---
         char earned_buf[64];
         char missed_buf[64];
         format_money_php(total_earned, earned_buf, sizeof(earned_buf));
@@ -2537,7 +2552,7 @@ void seller_sales_history(TxStack *stack, User *user)
 
         SalesOrderRow *picked = &rows[choice - 1];
 
-        /* --- Sale details screen --- */
+    // --- Sale details screen ---
         char date_buf[64];
         format_date_readable(picked->date, date_buf, sizeof(date_buf));
 
@@ -2576,7 +2591,7 @@ void seller_sales_history(TxStack *stack, User *user)
     }
 }
 
-/* --- Count pending orders for an item --- */
+    // --- Count pending orders for an item ---
 int count_pending_orders_for_item(InquiryQueue *q, int item_id)
 {
     int count = 0;
@@ -2592,141 +2607,7 @@ int count_pending_orders_for_item(InquiryQueue *q, int item_id)
     return count;
 }
 
-/* ========== HELPER FUNCTIONS FOR ADD PRODUCT FLOW ========== */
-
-/* Get category choice with subcategories */
-static void get_category_with_subcategory(char *category, char *subcategory)
-{
-    int cat_choice;
-    while (1)
-    {
-        printf("================================================================================\n");
-        printf("  [1] Uniform\n");
-        printf("  [2] Supply\n");
-        printf("  [3] Book\n");
-        printf("  [4] Other\n");
-        printf("================================================================================\n");
-        printf("  Enter choice [0-Back]: ");
-        if (scanf("%d", &cat_choice) != 1)
-        {
-            clear_input_buffer();
-            printf("  [ERROR] Invalid input.\n");
-            continue;
-        }
-        clear_input_buffer();
-
-        if (cat_choice == 0)
-            return;
-
-        switch (cat_choice)
-        {
-        case 1:
-            strcpy(category, "Uniform");
-            break;
-        case 2:
-            strcpy(category, "Supply");
-            break;
-        case 3:
-            strcpy(category, "Book");
-            break;
-        case 4:
-            strcpy(category, "Other");
-            break;
-        default:
-            printf("  [ERROR] Invalid choice.\n");
-            continue;
-        }
-
-        /* Get subcategory */
-        int subcat_choice;
-        while (1)
-        {
-            printf("\n  Select Sub-Category (category: %s)\n", category);
-            printf("  [1] Basketball\n");
-            printf("  [2] Volleyball Net\n");
-            printf("  [3] Chemistry Set\n");
-            printf("  [4] Projector Remote\n");
-            printf("  [5] ID Card Holder\n");
-            printf("  Enter choice [0-Back]: ");
-            if (scanf("%d", &subcat_choice) != 1)
-            {
-                clear_input_buffer();
-                printf("  [ERROR] Invalid input.\n");
-                continue;
-            }
-            clear_input_buffer();
-
-            if (subcat_choice == 0)
-                return;
-
-            switch (subcat_choice)
-            {
-            case 1:
-                strcpy(subcategory, "basketball");
-                break;
-            case 2:
-                strcpy(subcategory, "volleyball net");
-                break;
-            case 3:
-                strcpy(subcategory, "chemistry set");
-                break;
-            case 4:
-                strcpy(subcategory, "projector remote");
-                break;
-            case 5:
-                strcpy(subcategory, "id card holder");
-                break;
-            default:
-                printf("  [ERROR] Invalid choice.\n");
-                continue;
-            }
-            return;
-        }
-    }
-}
-
-/* Get condition choice */
-static void get_condition_choice(char *condition)
-{
-    int cond_choice;
-    while (1)
-    {
-        printf("  [1] Brand New\n");
-        printf("  [2] Good Condition\n");
-        printf("  [3] Worn\n");
-        printf("================================================================================\n");
-        printf("  Enter choice [0-Back]: ");
-        if (scanf("%d", &cond_choice) != 1)
-        {
-            clear_input_buffer();
-            printf("  [ERROR] Invalid input.\n");
-            continue;
-        }
-        clear_input_buffer();
-
-        if (cond_choice == 0)
-            return;
-
-        switch (cond_choice)
-        {
-        case 1:
-            strcpy(condition, "Brand New");
-            break;
-        case 2:
-            strcpy(condition, "Good Condition");
-            break;
-        case 3:
-            strcpy(condition, "Worn");
-            break;
-        default:
-            printf("  [ERROR] Invalid choice.\n");
-            continue;
-        }
-        return;
-    }
-}
-
-/* PH mobile: local format with exactly 10 digits starting with 9 (e.g. 9857463274) */
+    // PH mobile: local format with exactly 10 digits starting with 9 (e.g. 9857463274)
 static int validate_contact(const char *contact)
 {
     if (!contact || !*contact)
@@ -2751,7 +2632,7 @@ static int validate_contact(const char *contact)
     return 1;
 }
 
-/* Check for duplicate item with same title by same seller */
+    // Check for duplicate item with same title by same seller
 static int check_duplicate_item(Catalog *catalog, const char *title, const char *seller)
 {
     Item *current = catalog->head;
@@ -2767,7 +2648,7 @@ static int check_duplicate_item(Catalog *catalog, const char *title, const char 
     return -1; /* No duplicate found */
 }
 
-/* Step-style header for the add product workflow */
+    // Step-style header for the add product workflow
 static void print_add_product_header(const User *user, int step, const char *step_label)
 {
     print_centered_header("ADD PRODUCT");
@@ -2775,7 +2656,7 @@ static void print_add_product_header(const User *user, int step, const char *ste
     printf("\n");
 }
 
-/* Display item details for confirmation */
+    // Display item details for confirmation
 static void display_item_details_for_confirmation(const char *title, const char *category,
                                                    const char *subcategory, const char *condition,
                                                    float price, int stock, const char *seller,
@@ -2799,7 +2680,7 @@ static void display_item_details_for_confirmation(const char *title, const char 
     printf("================================================================================\n");
 }
 
-/* Main step-by-step add product function */
+    // Main step-by-step add product function
 void seller_add_item_step_by_step(Catalog *catalog, InquiryQueue *q, HashTable *ht, User *user)
 {
     char title[100] = {0};
@@ -2814,7 +2695,7 @@ void seller_add_item_step_by_step(Catalog *catalog, InquiryQueue *q, HashTable *
 
     strcpy(seller_name, user->display_name);
 
-    /* Product name */
+    // Product name
     while (1)
     {
         print_add_product_header(user, 1, "PRODUCT NAME");
@@ -2836,7 +2717,7 @@ void seller_add_item_step_by_step(Catalog *catalog, InquiryQueue *q, HashTable *
         break;
     }
 
-    /* Category */
+    // Category
     while (1)
     {
         print_add_product_header(user, 2, "SELECT CATEGORY");
@@ -2888,7 +2769,7 @@ void seller_add_item_step_by_step(Catalog *catalog, InquiryQueue *q, HashTable *
         break;
     }
 
-    /* Other: skip sub-category — go straight to condition; listing uses category "other" + your title */
+    // Other: skip sub-category — go straight to condition; listing uses category "other" + your title
     if (strcmp(category, "Other") == 0)
     {
         strncpy(subcategory, title, sizeof(subcategory) - 1);
@@ -2896,7 +2777,7 @@ void seller_add_item_step_by_step(Catalog *catalog, InquiryQueue *q, HashTable *
         goto add_product_after_subcategory;
     }
 
-    /* Sub-category */
+    // Sub-category
     while (1)
     {
         print_add_product_header(user, 3, "SELECT SUB-CATEGORY");
@@ -2908,14 +2789,12 @@ void seller_add_item_step_by_step(Catalog *catalog, InquiryQueue *q, HashTable *
 
         int subcat_choice;
         
-        /* Display subcategories based on main category */
+    // Display subcategories based on main category
         if (strcmp(category, "Uniform") == 0)
         {
-            printf("  [1]  Blouse\n");
-            printf("  [2]  Skirt\n");
-            printf("  [3]  Pants\n");
-            printf("  [4]  PE Uniform\n");
-            printf("  [5]  Others\n");
+            printf("  [1]  SCHOOL UNIFORM\n");
+            printf("  [2]  ROTC UNIFORM\n");
+            printf("  [3]  PATHFIT UNIFORM\n");
         }
         else if (strcmp(category, "Supply") == 0)
         {
@@ -2956,19 +2835,13 @@ void seller_add_item_step_by_step(Catalog *catalog, InquiryQueue *q, HashTable *
             switch (subcat_choice)
             {
             case 1:
-                strcpy(subcategory, "Blouse");
+                strcpy(subcategory, "SCHOOL UNIFORM");
                 break;
             case 2:
-                strcpy(subcategory, "Skirt");
+                strcpy(subcategory, "ROTC UNIFORM");
                 break;
             case 3:
-                strcpy(subcategory, "Pants");
-                break;
-            case 4:
-                strcpy(subcategory, "PE Uniform");
-                break;
-            case 5:
-                strcpy(subcategory, "Others");
+                strcpy(subcategory, "PATHFIT UNIFORM");
                 break;
             default:
                 printf("  [ERROR] Invalid choice.\n");
@@ -3028,7 +2901,7 @@ void seller_add_item_step_by_step(Catalog *catalog, InquiryQueue *q, HashTable *
 
 add_product_after_subcategory:
 
-    /* Condition */
+    // Condition
     while (1)
     {
         print_add_product_header(user, 4, "SELECT CONDITION");
@@ -3077,7 +2950,7 @@ add_product_after_subcategory:
         break;
     }
 
-    /* Price */
+    // Price
     while (1)
     {
         print_add_product_header(user, 5, "ENTER PRICE");
@@ -3114,7 +2987,7 @@ add_product_after_subcategory:
         break;
     }
 
-    /* Stock */
+    // Stock
     while (1)
     {
         print_add_product_header(user, 6, "ENTER STOCK QUANTITY");
@@ -3152,7 +3025,7 @@ add_product_after_subcategory:
         break;
     }
 
-    /* Seller Name */
+    // Seller Name
     print_add_product_header(user, 7, "SELLER NAME");
     printf("  Product Name  : %s\n", title);
     printf("  Category      : %s > %s\n", category, subcategory);
@@ -3166,7 +3039,7 @@ add_product_after_subcategory:
     printf("================================================================================\n");
     printf("\n");
 
-    /* Contact */
+    // Contact
     while (1)
     {
         print_add_product_header(user, 8, "CONTACT INFO");
@@ -3265,7 +3138,7 @@ add_product_after_subcategory:
             break;
     }
 
-    /* Check for duplicate */
+    // Check for duplicate
     int duplicate_id = check_duplicate_item(catalog, title, user->username);
     if (duplicate_id != -1)
     {
@@ -3296,7 +3169,7 @@ add_product_after_subcategory:
             return;
     }
 
-    /* Confirmation screen with edit option */
+    // Confirmation screen with edit option
     while (1)
     {
         printf("\n");
@@ -3331,7 +3204,7 @@ add_product_after_subcategory:
 
         if (choice == 'E')
         {
-            /* Edit Details */
+    // Edit Details
             while (1)
             {
                 print_centered_header("EDIT DETAILS");
@@ -3546,7 +3419,7 @@ add_product_after_subcategory:
 
         if (choice == 'P')
         {
-            /* Post the item (category stored lowercase for catalog / hash / buyer browse) */
+    // Post the item (category stored lowercase for catalog / hash / buyer browse)
             char category_db[50];
             strncpy(category_db, category, sizeof(category_db) - 1);
             category_db[sizeof(category_db) - 1] = '\0';
@@ -3558,7 +3431,7 @@ add_product_after_subcategory:
             {
                 ht_insert(ht, category_db, new_id);
 
-                /* Get current timestamp */
+    // Get current timestamp
                 char timestamp[50];
                 get_timestamp(timestamp, sizeof(timestamp));
 
@@ -3619,7 +3492,7 @@ add_product_after_subcategory:
     }
 }
 
-/* --- Helper function to get seller name from item ID --- */
+    // --- Helper function to get seller name from item ID ---
 const char *get_seller_from_item_id(int item_id)
 {
     if (item_id >= 1001 && item_id <= 1010)
@@ -3759,7 +3632,7 @@ const char *get_seller_from_item_id(int item_id)
     return NULL;
 }
 
-/* --- Helper function to display inquiries for a specific seller --- */
+    // --- Helper function to display inquiries for a specific seller ---
 int display_inquiries_for_seller(InquiryQueue *q, const char *seller_name)
 {
     if (is_queue_empty(q))
@@ -3832,7 +3705,7 @@ InquiryNode *get_seller_inquiry_by_index(InquiryQueue *q, const char *seller_nam
     return NULL;
 }
 
-/* --- Helper for building a display item list --- */
+    // --- Helper for building a display item list ---
 typedef struct DisplayItem
 {
     int id;
@@ -3996,17 +3869,17 @@ static int buy_now_item(Catalog *catalog, TxStack *stack, DisplayItem *item, Use
         return 0;
     }
 
-    /* Create a temporary cart for Buy Now checkout */
+    // Create a temporary cart for Buy Now checkout
     ShoppingCart temp_cart;
     init_cart(&temp_cart);
     add_to_cart(&temp_cart, item->id, item->product, item->condition, item->seller, item->contact, buyer->username, item->price, 1);
 
-    /* Display checkout for Buy Now */
+    // Display checkout for Buy Now
     int order_placed = checkout_display(&temp_cart, buyer->username, stack, catalog, 1);
 
     if (order_placed == 1)
     {
-        /* Catalog stock already updated in checkout; sync sold-id cache when fully sold */
+    // Catalog stock already updated in checkout; sync sold-id cache when fully sold
         if (catalog_item != NULL)
         {
             if (catalog_item->is_sold)
@@ -4238,7 +4111,7 @@ static void append_catalog_items_for_other_browse(Catalog *catalog, DisplayItem 
     }
 }
 
-/* --- Helper function for product type filtering --- */
+    // --- Helper function for product type filtering ---
 void display_items_by_subcategory(Catalog *catalog, ShoppingCart *cart, InquiryQueue *q, TxStack *stack, const char *category, const char *subcategory, User *user)
 {
     DisplayItem items[56];
@@ -4453,7 +4326,7 @@ void display_items_by_subcategory(Catalog *catalog, ShoppingCart *cart, InquiryQ
             add_display_item(items, &item_count, 6005, "Clipboard", "Brand New", 75.00f, "Guidance Office", "09737895432", 1);
             add_display_item(items, &item_count, 6010, "Clipboard", "Like New", 55.00f, "Class Adviser", "09848906543", 1);
         }
-        /* other_misc: demo rows only come from live catalog via append below */
+    // other_misc: demo rows only come from live catalog via append below
     }
 
     append_catalog_items_for_other_browse(catalog, items, &item_count, category, subcategory);
@@ -4542,7 +4415,7 @@ void display_items_by_subcategory(Catalog *catalog, ShoppingCart *cart, InquiryQ
 
             if (strcmp(action, "1") == 0)
             {
-                /* Check if item quantity is 1, if so, don't ask, just add 1 to cart */
+    // Check if item quantity is 1, if so, don't ask, just add 1 to cart
                 int quantity;
                 if (selected->quantity == 1)
                 {
@@ -4571,7 +4444,7 @@ void display_items_by_subcategory(Catalog *catalog, ShoppingCart *cart, InquiryQ
 
                         if (post_choice == 1)
                         {
-                            /* Continue Browsing */
+    // Continue Browsing
                             break;
                         }
                         else if (post_choice == 2)
@@ -4581,13 +4454,13 @@ void display_items_by_subcategory(Catalog *catalog, ShoppingCart *cart, InquiryQ
                         }
                         else if (post_choice == 3)
                         {
-                            /* Checkout Now */
+    // Checkout Now
                             checkout_display(cart, user->username, stack, catalog, 1);
                             break;
                         }
                         else if (post_choice == 0)
                         {
-                            /* Back to Menu */
+    // Back to Menu
                             break;
                         }
 
@@ -4647,6 +4520,7 @@ void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *
             printf("  [3] View Cart\n");
             printf("  [4] My Orders / Transaction History\n");
             printf("  [5] View Category Index\n");
+            printf("  [6] Logout\n");
             printf("\n  Enter choice [0-Back]: ");
 
             if (scanf("%d", &choice) != 1)
@@ -4665,7 +4539,7 @@ void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *
 
         if (choice == 1)
         {
-            /* --- Browse Products --- */
+    // --- Browse Products ---
             print_header("BROWSE PRODUCTS");
             printf("  [1] Uniform\n");
             printf("  [2] Supply\n");
@@ -5077,7 +4951,7 @@ void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *
         }
         else if (choice == 2)
         {
-            /* --- Search Product --- */
+    // --- Search Product ---
             while (1)
             {
                 print_centered_header("SEARCH PRODUCT");
@@ -5283,7 +5157,7 @@ void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *
 
                     if (strcmp(action, "1") == 0)
                     {
-                        /* Check if item quantity is 1, if so, don't ask, just add 1 to cart */
+    // Check if item quantity is 1, if so, don't ask, just add 1 to cart
                         int quantity;
                         if (selected->quantity == 1)
                         {
@@ -5312,7 +5186,7 @@ void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *
 
                                 if (post_choice == 1)
                                 {
-                                    /* Continue Browsing */
+    // Continue Browsing
                                     break;
                                 }
                                 else if (post_choice == 2)
@@ -5322,13 +5196,13 @@ void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *
                                 }
                                 else if (post_choice == 3)
                                 {
-                                    /* Checkout Now */
+    // Checkout Now
                                     checkout_display(cart, user->username, stack, catalog, 0);
                                     break;
                                 }
                                 else if (post_choice == 0)
                                 {
-                                    /* Back to Menu */
+    // Back to Menu
                                     break;
                                 }
 
@@ -5368,7 +5242,7 @@ void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *
         }
         else if (choice == 3)
         {
-            /* --- View Cart --- */
+    // --- View Cart ---
             int cart_result = handle_cart_menu(cart, user->username, stack, catalog);
             if (cart_result == 1)
             {
@@ -5378,7 +5252,7 @@ void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *
         }
         else if (choice == 4)
         {
-            /* --- My Orders / Transaction History --- */
+    // --- My Orders / Transaction History ---
             while (1)
             {
                 print_centered_header("MY ORDERS");
@@ -5403,7 +5277,7 @@ void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *
                 }
                 else if (strcasecmp(order_nav, "V") == 0)
                 {
-                    /* View Order Details */
+    // View Order Details
                     printf("  Enter No. to View Details [0-Back]: ");
                     char detail_input[32];
                     if (!fgets(detail_input, sizeof(detail_input), stdin))
@@ -5591,7 +5465,7 @@ void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *
                 }
                 else if (strcasecmp(order_nav, "R") == 0)
                 {
-                    /* Mark as Received */
+    // Mark as Received
                     printf("  Enter No. to Mark as Received [0-Back]: ");
                     char recv_input[32];
                     if (!fgets(recv_input, sizeof(recv_input), stdin))
@@ -5680,7 +5554,7 @@ void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *
                 }
                 else if (strcasecmp(order_nav, "C") == 0)
                 {
-                    /* Cancel Order */
+    // Cancel Order
                     printf("  Enter No. to Cancel Order [0-Back]: ");
                     char cancel_input[32];
                     if (!fgets(cancel_input, sizeof(cancel_input), stdin))
@@ -5777,7 +5651,7 @@ void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *
         }
         else if (choice == 5)
         {
-            /* --- View Category Index --- */
+    // --- View Category Index ---
             while (1)
             {
                 printf("\n");
@@ -5964,6 +5838,20 @@ void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *
                 else
                 {
                     printf("  [ERROR] Invalid choice. Enter a number 1-4 or 0.\n");
+                }
+            }
+        }
+        else if (choice == 6)
+        {
+    // --- Logout ---
+            printf("Are you sure you want to logout? (y/n): ");
+            char confirm[10];
+            if (fgets(confirm, sizeof(confirm), stdin))
+            {
+                trim_input(confirm);
+                if (confirm[0] == 'y' || confirm[0] == 'Y')
+                {
+                    break;
                 }
             }
         }
