@@ -1,33 +1,29 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <ctype.h>
 #include "utils.h"
 
-/* ============================================================
-   utils.c — Trade Hub System
-   Utility / helper function implementations
-   ============================================================ */
+// ============================================================
+// utils.c â€” Trade Hub System
+// Utility / helper function implementations
+// ============================================================
 
-/* Static counter for generating unique item IDs */
+// Static counter for generating unique item IDs
 static int id_counter = 5000;
 
-/* ----------------------------------------------------------
-   get_timestamp
-   Fills buffer with current date and time.
-   Format: "YYYY-MM-DD HH:MM"
-   ---------------------------------------------------------- */
+// get_timestamp
+// Fills buffer with current date and time.
+// Format: "YYYY-MM-DD HH:MM"
 void get_timestamp(char *buffer, int size) {
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
     strftime(buffer, size, "%Y-%m-%d %H:%M", t);
 }
 
-/* ----------------------------------------------------------
-   trim_input
-   Trims whitespace and newline characters from a string.
-   ---------------------------------------------------------- */
+// trim_input
+// Trims whitespace and newline characters from a string.
 void trim_input(char *input) {
     if (!input) {
         return;
@@ -49,36 +45,28 @@ void trim_input(char *input) {
     }
 }
 
-/* ----------------------------------------------------------
-   generate_id
-   Returns the next unique item ID starting from 5001.
-   ---------------------------------------------------------- */
+// generate_id
+// Returns the next unique item ID starting from 5001.
 int generate_id(void) {
     return id_counter++;
 }
 
-/* ----------------------------------------------------------
-   clear_input_buffer
-   Clears leftover characters in stdin.
-   Always call this after scanf() to avoid input bugs.
-   ---------------------------------------------------------- */
+// clear_input_buffer
+// Clears leftover characters in stdin.
+// Always call this after scanf() to avoid input bugs.
 void clear_input_buffer(void) {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
-/* ----------------------------------------------------------
-   validate_price
-   Returns 1 if price is positive, 0 otherwise.
-   ---------------------------------------------------------- */
+// validate_price
+// Returns 1 if price is positive, 0 otherwise.
 int validate_price(float price) {
     return price > 0;
 }
 
-/* ----------------------------------------------------------
-   print_header
-   Prints a styled divider with a centered title using 80-char border.
-   ---------------------------------------------------------- */
+// print_header
+// Prints a styled divider with a centered title using 80-char border.
 void print_header(const char *title) {
     printf("\n");
     printf("================================================================================\n");
@@ -91,10 +79,8 @@ void print_header(const char *title) {
     printf("================================================================================\n");
 }
 
-/* ----------------------------------------------------------
-   print_centered_header
-   Prints a centered header with 80-char decorative border.
-   ---------------------------------------------------------- */
+// print_centered_header
+// Prints a centered header with 80-char decorative border.
 void print_centered_header(const char *title) {
     printf("\n");
     printf("================================================================================\n");
@@ -105,11 +91,9 @@ void print_centered_header(const char *title) {
     printf("================================================================================\n");
 }
 
-/* ----------------------------------------------------------
-   to_lowercase
-   Converts all characters in str to lowercase in-place.
-   Used for case-insensitive keyword search.
-   ---------------------------------------------------------- */
+// to_lowercase
+// Converts all characters in str to lowercase in-place.
+// Used for case-insensitive keyword search.
 void to_lowercase(char *str) {
     for (int i = 0; str[i]; i++) {
         str[i] = tolower((unsigned char)str[i]);

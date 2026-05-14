@@ -1,39 +1,35 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "catalog.h"
 #include "utils.h"
 
-/* ============================================================
-   catalog.c — Trade Hub System
-   DATA STRUCTURE : Singly Linked List
-   Manages all posted item listings.
-   ALGORITHMS     : Linear Search, Binary Search,
-                    Bubble Sort, Selection Sort
-   ============================================================ */
+// ============================================================
+// catalog.c â€” Trade Hub System
+// DATA STRUCTURE : Singly Linked List
+// Manages all posted item listings.
+// ALGORITHMS     : Linear Search, Binary Search,
+//                 Bubble Sort, Selection Sort
+// ============================================================
 
-/* ----------------------------------------------------------
-   init_catalog
-   Initializes an empty catalog (linked list).
-   ---------------------------------------------------------- */
+// init_catalog
+// Initializes an empty catalog (linked list).
 void init_catalog(Catalog *catalog)
 {
     catalog->head = NULL;
     catalog->count = 0;
 }
 
-/* ----------------------------------------------------------
-   post_item
-   Creates a new Item node and inserts it at the HEAD
-   of the linked list. O(1) insertion.
-   Returns the new item's generated ID.
-   ---------------------------------------------------------- */
+// post_item
+// Creates a new Item node and inserts it at the HEAD
+// of the linked list. O(1) insertion.
+// Returns the new item's generated ID.
 int post_item(Catalog *catalog, const char *title,
               const char *category, const char *condition,
               float price, const char *seller, const char *contact, int quantity)
 {
 
-    /* Allocate memory for the new item */
+    // Allocate memory for the new item
     Item *new_item = (Item *)malloc(sizeof(Item));
     if (!new_item)
     {
@@ -41,7 +37,7 @@ int post_item(Catalog *catalog, const char *title,
         return -1;
     }
 
-    /* Fill in the item's data */
+    // Fill in the item's data
     new_item->id = generate_id();
     strncpy(new_item->title, title, sizeof(new_item->title) - 1);
     strncpy(new_item->category, category, sizeof(new_item->category) - 1);
@@ -52,14 +48,14 @@ int post_item(Catalog *catalog, const char *title,
     new_item->quantity = quantity;
     new_item->is_sold = 0;
 
-    /* Ensure null termination */
+    // Ensure null termination
     new_item->title[sizeof(new_item->title) - 1] = '\0';
     new_item->category[sizeof(new_item->category) - 1] = '\0';
     new_item->condition[sizeof(new_item->condition) - 1] = '\0';
     new_item->seller[sizeof(new_item->seller) - 1] = '\0';
     new_item->contact[sizeof(new_item->contact) - 1] = '\0';
 
-    /* Insert at head of linked list */
+    // Insert at head of linked list
     new_item->next = catalog->head;
     catalog->head = new_item;
     catalog->count++;
@@ -101,25 +97,23 @@ int post_item_silent(Catalog *catalog, const char *title,
     return new_item->id;
 }
 
-/* ----------------------------------------------------------
-   remove_item
-   Traverses the linked list to find and delete an item by ID.
-   Returns 1 if found and removed, 0 if not found.
-   ---------------------------------------------------------- */
+// remove_item
+// Traverses the linked list to find and delete an item by ID.
+// Returns 1 if found and removed, 0 if not found.
 int remove_item(Catalog *catalog, int item_id)
 {
     Item *current = catalog->head;
     Item *previous = NULL;
 
-    /* Traverse the list looking for the item */
+    // Traverse the list looking for the item
     while (current != NULL)
     {
         if (current->id == item_id)
         {
-            /* Bypass the node to remove it */
+            // Bypass the node to remove it
             if (previous == NULL)
             {
-                catalog->head = current->next; /* removing head */
+                catalog->head = current->next; // removing head
             }
             else
             {
@@ -138,11 +132,9 @@ int remove_item(Catalog *catalog, int item_id)
     return 0;
 }
 
-/* ----------------------------------------------------------
-   mark_sold
-   Finds an item by ID and sets its is_sold flag to 1.
-   Returns 1 on success, 0 if not found.
-   ---------------------------------------------------------- */
+// mark_sold
+// Finds an item by ID and sets its is_sold flag to 1.
+// Returns 1 on success, 0 if not found.
 int mark_sold(Catalog *catalog, int item_id)
 {
     Item *item = get_item_by_id(catalog, item_id);
@@ -156,11 +148,9 @@ int mark_sold(Catalog *catalog, int item_id)
     return 0;
 }
 
-/* ----------------------------------------------------------
-   display_all
-   Traverses the entire linked list and prints all
-   available (not sold) listings.
-   ---------------------------------------------------------- */
+// display_all
+// Traverses the entire linked list and prints all
+// available (not sold) listings.
 void display_all(Catalog *catalog)
 {
     if (catalog->head == NULL)
@@ -202,10 +192,8 @@ void display_all(Catalog *catalog)
         printf("  %d listing(s) shown.\n", shown);
 }
 
-/* ----------------------------------------------------------
-   display_by_category
-   Traverses the list and prints only items matching category.
-   ---------------------------------------------------------- */
+// display_by_category
+// Traverses the list and prints only items matching category.
 void display_by_category(Catalog *catalog, const char *category)
 {
     Item *current = catalog->head;
@@ -238,10 +226,8 @@ void display_by_category(Catalog *catalog, const char *category)
         printf("  %d item(s) found under '%s'.\n", found, category);
 }
 
-/* ----------------------------------------------------------
-   display_by_seller
-   Traverses the list and prints only items from a specific seller.
-   ---------------------------------------------------------- */
+// display_by_seller
+// Traverses the list and prints only items from a specific seller.
 void display_by_seller(Catalog *catalog, const char *seller)
 {
     Item *current = catalog->head;
@@ -275,11 +261,9 @@ void display_by_seller(Catalog *catalog, const char *seller)
         printf("  %d listing(s) shown.\n", found);
 }
 
-/* ----------------------------------------------------------
-   get_item_by_id
-   Linear traversal to find an item by ID.
-   Returns pointer to item, or NULL if not found.
-   ---------------------------------------------------------- */
+// get_item_by_id
+// Linear traversal to find an item by ID.
+// Returns pointer to item, or NULL if not found.
 Item *get_item_by_id(Catalog *catalog, int item_id)
 {
     Item *current = catalog->head;
@@ -292,11 +276,9 @@ Item *get_item_by_id(Catalog *catalog, int item_id)
     return NULL;
 }
 
-/* ----------------------------------------------------------
-   get_item_by_details
-   Finds a catalog item by exact details when the ID is invalid
-   or stale. This helps cart checkout recover missing IDs.
-   ---------------------------------------------------------- */
+// get_item_by_details
+// Finds a catalog item by exact details when the ID is invalid
+// or stale. This helps cart checkout recover missing IDs.
 Item *get_item_by_details(Catalog *catalog, const char *title,
                           const char *condition, const char *seller,
                           const char *contact, float price)
@@ -320,10 +302,8 @@ Item *get_item_by_details(Catalog *catalog, const char *title,
     return NULL;
 }
 
-/* ----------------------------------------------------------
-   catalog_apply_purchase
-   Reduces listed quantity after a sale; marks sold when stock hits 0.
-   ---------------------------------------------------------- */
+// catalog_apply_purchase
+// Reduces listed quantity after a sale; marks sold when stock hits 0.
 int catalog_apply_purchase(Catalog *catalog, int item_id, int quantity)
 {
     Item *it = get_item_by_id(catalog, item_id);
@@ -338,11 +318,9 @@ int catalog_apply_purchase(Catalog *catalog, int item_id, int quantity)
     return 1;
 }
 
-/* ----------------------------------------------------------
-   free_catalog
-   Frees all dynamically allocated Item nodes.
-   Always call before exiting the program.
-   ---------------------------------------------------------- */
+// free_catalog
+// Frees all dynamically allocated Item nodes.
+// Always call before exiting the program.
 void free_catalog(Catalog *catalog)
 {
     Item *current = catalog->head;
@@ -357,21 +335,19 @@ void free_catalog(Catalog *catalog)
     catalog->count = 0;
 }
 
-/* ==========================================================
-   ALGORITHMS
-   ========================================================== */
+// ==========================================================
+// ALGORITHMS
+// ==========================================================
 
-/* ----------------------------------------------------------
-   search_by_keyword  [ALGORITHM: Linear Search]
-   Scans all item titles for a keyword using strstr().
-   Case-insensitive. O(n) time complexity.
-   ---------------------------------------------------------- */
+// search_by_keyword  [ALGORITHM: Linear Search]
+// Scans all item titles for a keyword using strstr().
+// Case-insensitive. O(n) time complexity.
 void search_by_keyword(Catalog *catalog, const char *keyword)
 {
     Item *current = catalog->head;
     int found = 0;
 
-    /* Make a lowercase copy of the keyword for comparison */
+    // Make a lowercase copy of the keyword for comparison
     char kw_lower[100];
     strncpy(kw_lower, keyword, sizeof(kw_lower) - 1);
     to_lowercase(kw_lower);
@@ -380,14 +356,14 @@ void search_by_keyword(Catalog *catalog, const char *keyword)
 
     while (current != NULL)
     {
-        /* Make a lowercase copy of the title to compare */
+        // Make a lowercase copy of the title to compare
         char title_lower[100];
         strncpy(title_lower, current->title, sizeof(title_lower) - 1);
         to_lowercase(title_lower);
 
         if (!current->is_sold && strstr(title_lower, kw_lower))
         {
-            printf("  [%d] %s — PHP %.2f (%s) | Seller: %s\n",
+            printf("  [%d] %s â€” PHP %.2f (%s) | Seller: %s\n",
                    current->id, current->title, current->price,
                    current->condition, current->seller);
             found++;
@@ -401,12 +377,10 @@ void search_by_keyword(Catalog *catalog, const char *keyword)
         printf("\n  %d result(s) found.\n", found);
 }
 
-/* ----------------------------------------------------------
-   catalog_to_array
-   Copies available item pointers into a flat array.
-   Required before sorting or binary search.
-   Returns the number of items copied (up to max_size).
-   ---------------------------------------------------------- */
+// catalog_to_array
+// Copies available item pointers into a flat array.
+// Required before sorting or binary search.
+// Returns the number of items copied (up to max_size).
 int catalog_to_array(Catalog *catalog, Item **out_array, int max_size)
 {
     int i = 0;
@@ -423,13 +397,11 @@ int catalog_to_array(Catalog *catalog, Item **out_array, int max_size)
     return i;
 }
 
-/* ----------------------------------------------------------
-   sort_by_price  [ALGORITHM: Bubble Sort]
-   Sorts an array of Item pointers by price.
-   ascending = 1  →  low to high
-   ascending = 0  →  high to low
-   O(n²) time complexity.
-   ---------------------------------------------------------- */
+// sort_by_price  [ALGORITHM: Bubble Sort]
+// Sorts an array of Item pointers by price.
+// ascending = 1  â†’  low to high
+// ascending = 0  â†’  high to low
+// O(nÂ²) time complexity.
 void sort_by_price(Item **items, int count, int ascending)
 {
     for (int i = 0; i < count - 1; i++)
@@ -442,7 +414,7 @@ void sort_by_price(Item **items, int count, int ascending)
 
             if (should_swap)
             {
-                /* Swap pointers */
+                // Swap pointers
                 Item *temp = items[j];
                 items[j] = items[j + 1];
                 items[j + 1] = temp;
@@ -451,18 +423,16 @@ void sort_by_price(Item **items, int count, int ascending)
     }
 }
 
-/* ----------------------------------------------------------
-   sort_by_name  [ALGORITHM: Selection Sort]
-   Sorts an array of Item pointers alphabetically by title.
-   O(n²) time complexity.
-   ---------------------------------------------------------- */
+// sort_by_name  [ALGORITHM: Selection Sort]
+// Sorts an array of Item pointers alphabetically by title.
+// O(nÂ²) time complexity.
 void sort_by_name(Item **items, int count)
 {
     for (int i = 0; i < count - 1; i++)
     {
         int min_idx = i;
 
-        /* Find the item with the smallest title from i onward */
+        // Find the item with the smallest title from i onward
         for (int j = i + 1; j < count; j++)
         {
             if (strcasecmp(items[j]->title, items[min_idx]->title) < 0)
@@ -471,7 +441,7 @@ void sort_by_name(Item **items, int count)
             }
         }
 
-        /* Swap the found minimum with position i */
+        // Swap the found minimum with position i
         if (min_idx != i)
         {
             Item *temp = items[i];
@@ -481,13 +451,11 @@ void sort_by_name(Item **items, int count)
     }
 }
 
-/* ----------------------------------------------------------
-   binary_search_price  [ALGORITHM: Binary Search]
-   Searches a SORTED array for a target price.
-   Returns the index of a match, or -1 if not found.
-   The array MUST be sorted by price first.
-   O(log n) time complexity.
-   ---------------------------------------------------------- */
+// binary_search_price  [ALGORITHM: Binary Search]
+// Searches a SORTED array for a target price.
+// Returns the index of a match, or -1 if not found.
+// The array MUST be sorted by price first.
+// O(log n) time complexity.
 int binary_search_price(Item **sorted_items, int count, float target_price)
 {
     int left = 0;
@@ -501,25 +469,23 @@ int binary_search_price(Item **sorted_items, int count, float target_price)
 
         if (diff >= -tolerance && diff <= tolerance)
         {
-            return mid; /* match found within tolerance */
+            return mid; // match found within tolerance
         }
         else if (diff < 0)
         {
-            left = mid + 1; /* search right half */
+            left = mid + 1; // search right half
         }
         else
         {
-            right = mid - 1; /* search left half */
+            right = mid - 1; // search left half
         }
     }
 
-    return -1; /* not found */
+    return -1; // not found
 }
 
-/* ----------------------------------------------------------
-   search_by_exact_price
-   Finds all available listings matching the target price.
-   ---------------------------------------------------------- */
+// search_by_exact_price
+// Finds all available listings matching the target price.
 void search_by_exact_price(Catalog *catalog, float target_price)
 {
     Item *current = catalog->head;
@@ -533,7 +499,7 @@ void search_by_exact_price(Catalog *catalog, float target_price)
             current->price >= target_price - tolerance &&
             current->price <= target_price + tolerance)
         {
-            printf("  [%d] %s — PHP %.2f (%s) | Seller: %s | Contact: %s\n",
+            printf("  [%d] %s â€” PHP %.2f (%s) | Seller: %s | Contact: %s\n",
                    current->id, current->title,
                    current->price, current->condition,
                    current->seller, current->contact);
@@ -552,16 +518,14 @@ void search_by_exact_price(Catalog *catalog, float target_price)
     }
 }
 
-/* ----------------------------------------------------------
-   filter_by_price_range
-   Prints all available items within [min_price, max_price].
-   ---------------------------------------------------------- */
+// filter_by_price_range
+// Prints all available items within [min_price, max_price].
 void filter_by_price_range(Catalog *catalog, float min_price, float max_price)
 {
     Item *current = catalog->head;
     int found = 0;
 
-    printf("  Items priced PHP %.2f — PHP %.2f:\n\n", min_price, max_price);
+    printf("  Items priced PHP %.2f â€” PHP %.2f:\n\n", min_price, max_price);
 
     while (current != NULL)
     {
@@ -569,7 +533,7 @@ void filter_by_price_range(Catalog *catalog, float min_price, float max_price)
             current->price >= min_price &&
             current->price <= max_price)
         {
-            printf("  [%d] %s — PHP %.2f | Seller: %s\n",
+            printf("  [%d] %s â€” PHP %.2f | Seller: %s\n",
                    current->id, current->title,
                    current->price, current->seller);
             found++;

@@ -1,33 +1,29 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "stack.h"
 #include "utils.h"
 
-/* ============================================================
-   stack.c — Trade Hub System
-   DATA STRUCTURE : Stack (LIFO — Linked List based)
-   Records all trade transactions in the system.
-   WHY STACK: The most recent transaction is most relevant —
-              LIFO naturally shows newest activity first.
-   ============================================================ */
+// ============================================================
+// stack.c â€” Trade Hub System
+// DATA STRUCTURE : Stack (LIFO â€” Linked List based)
+// Records all trade transactions in the system.
+// WHY STACK: The most recent transaction is most relevant â€”
+// LIFO naturally shows newest activity first.
+// ============================================================
 
-/* ----------------------------------------------------------
-   init_stack
-   Sets up an empty transaction stack.
-   ---------------------------------------------------------- */
+// init_stack
+// Sets up an empty transaction stack.
 void init_stack(TxStack *stack)
 {
     stack->top = NULL;
     stack->count = 0;
 }
 
-/* ----------------------------------------------------------
-   push_transaction
-   Records a new trade by pushing a TxNode onto the TOP
-   of the stack. O(1) insertion.
-   Status should be "completed" or "cancelled".
-   ---------------------------------------------------------- */
+// push_transaction
+// Records a new trade by pushing a TxNode onto the TOP
+// of the stack. O(1) insertion.
+// Status should be "completed" or "cancelled".
 int push_transaction(TxStack *stack,
                      int order_id,
                      int item_id,
@@ -43,7 +39,7 @@ int push_transaction(TxStack *stack,
                      const char *status)
 {
 
-    /* Allocate a new transaction node */
+    // Allocate a new transaction node
     TxNode *new_tx = (TxNode *)malloc(sizeof(TxNode));
     if (!new_tx)
     {
@@ -51,7 +47,7 @@ int push_transaction(TxStack *stack,
         return 0;
     }
 
-    /* Fill in transaction data */
+    // Fill in transaction data
     new_tx->order_id = order_id;
     new_tx->item_id = item_id;
     strncpy(new_tx->item_title, item_title, sizeof(new_tx->item_title) - 1);
@@ -60,7 +56,7 @@ int push_transaction(TxStack *stack,
     new_tx->item_condition[sizeof(new_tx->item_condition) - 1] = '\0';
     new_tx->quantity = quantity;
     new_tx->unit_price = unit_price;
-    new_tx->price = unit_price * quantity; /* store total */
+    new_tx->price = unit_price * quantity; // store total
     strncpy(new_tx->seller, seller, sizeof(new_tx->seller) - 1);
     new_tx->seller[sizeof(new_tx->seller) - 1] = '\0';
     strncpy(new_tx->seller_contact, seller_contact, sizeof(new_tx->seller_contact) - 1);
@@ -74,10 +70,10 @@ int push_transaction(TxStack *stack,
     strncpy(new_tx->status, status, sizeof(new_tx->status) - 1);
     new_tx->status[sizeof(new_tx->status) - 1] = '\0';
 
-    /* Auto-generate timestamp */
+    // Auto-generate timestamp
     get_timestamp(new_tx->date, sizeof(new_tx->date));
 
-    /* Push to top of stack */
+    // Push to top of stack
     new_tx->next = stack->top;
     stack->top = new_tx;
     stack->count++;
@@ -85,12 +81,10 @@ int push_transaction(TxStack *stack,
     return 1;
 }
 
-/* ----------------------------------------------------------
-   pop_transaction
-   Removes and returns the TOP (most recent) transaction.
-   Caller must free the returned node after use.
-   Returns NULL if stack is empty.
-   ---------------------------------------------------------- */
+// pop_transaction
+// Removes and returns the TOP (most recent) transaction.
+// Caller must free the returned node after use.
+// Returns NULL if stack is empty.
 TxNode *pop_transaction(TxStack *stack)
 {
     if (is_stack_empty(stack))
@@ -103,16 +97,14 @@ TxNode *pop_transaction(TxStack *stack)
     stack->top = stack->top->next;
     stack->count--;
 
-    popped->next = NULL; /* clean up dangling pointer */
+    popped->next = NULL; // clean up dangling pointer
     return popped;
 }
 
-/* ----------------------------------------------------------
-   peek_transaction
-   Returns the TOP node without removing it.
-   Useful to display the most recent transaction.
-   Returns NULL if stack is empty.
-   ---------------------------------------------------------- */
+// peek_transaction
+// Returns the TOP node without removing it.
+// Useful to display the most recent transaction.
+// Returns NULL if stack is empty.
 TxNode *peek_transaction(TxStack *stack)
 {
     if (is_stack_empty(stack))
@@ -123,11 +115,9 @@ TxNode *peek_transaction(TxStack *stack)
     return stack->top;
 }
 
-/* ----------------------------------------------------------
-   display_history
-   Prints all transactions from most recent to oldest
-   by traversing from top to bottom of the stack.
-   ---------------------------------------------------------- */
+// display_history
+// Prints all transactions from most recent to oldest
+// by traversing from top to bottom of the stack.
 void display_history(TxStack *stack)
 {
     if (is_stack_empty(stack))
@@ -161,10 +151,8 @@ void display_history(TxStack *stack)
     printf("  Total transactions: %d\n", stack->count);
 }
 
-/* ----------------------------------------------------------
-   display_user_orders
-   Prints only the transactions that belong to the logged-in buyer.
-   ---------------------------------------------------------- */
+// display_user_orders
+// Prints only the transactions that belong to the logged-in buyer.
 void display_user_orders(TxStack *stack, const char *username)
 {
     if (is_stack_empty(stack))
@@ -207,10 +195,8 @@ void display_user_orders(TxStack *stack, const char *username)
     }
 }
 
-/* ----------------------------------------------------------
-   get_user_order_by_index
-   Returns the Nth order for a specific buyer, or NULL if not found.
-   ---------------------------------------------------------- */
+// get_user_order_by_index
+// Returns the Nth order for a specific buyer, or NULL if not found.
 TxNode *get_user_order_by_index(TxStack *stack, const char *username, int index)
 {
     if (is_stack_empty(stack) || index <= 0)
@@ -237,20 +223,16 @@ TxNode *get_user_order_by_index(TxStack *stack, const char *username, int index)
     return NULL;
 }
 
-/* ----------------------------------------------------------
-   is_stack_empty
-   Returns 1 if the stack has no transactions, 0 otherwise.
-   ---------------------------------------------------------- */
+// is_stack_empty
+// Returns 1 if the stack has no transactions, 0 otherwise.
 int is_stack_empty(TxStack *stack)
 {
     return stack->top == NULL;
 }
 
-/* ----------------------------------------------------------
-   free_stack
-   Frees all transaction nodes in the stack.
-   Call before exiting the program.
-   ---------------------------------------------------------- */
+// free_stack
+// Frees all transaction nodes in the stack.
+// Call before exiting the program.
 void free_stack(TxStack *stack)
 {
     TxNode *current = stack->top;

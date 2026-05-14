@@ -56,10 +56,10 @@ typedef struct UserHashTable
 
     // --- Forward declarations for menu functions ---
 void main_menu(Catalog *catalog, InquiryQueue *q,
-               TxStack *stack, HashTable *ht, ShoppingCart *cart, User *user);
+               TxStack *stack, HashTable *ht, ShoppingCart *cart, UserList *users, UserHashTable *user_ht, User *user);
 void seller_menu(Catalog *catalog, InquiryQueue *q,
-                 TxStack *stack, HashTable *ht, User *user);
-void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *stack, HashTable *ht, User *user);
+                 TxStack *stack, HashTable *ht, UserList *users, UserHashTable *user_ht, User *user);
+void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *stack, HashTable *ht, UserList *users, UserHashTable *user_ht, User *user);
 void browse_menu(Catalog *catalog);
 int display_inquiries_for_seller(InquiryQueue *q, const char *seller_name);
 InquiryNode *get_seller_inquiry_by_index(InquiryQueue *q, const char *seller_name, int index);
@@ -72,6 +72,8 @@ void seller_update_item(Catalog *catalog, InquiryQueue *q, User *user);
 static int validate_contact(const char *contact); /* (+63) or +63 then 10 digits */
 
     // --- Forward declarations for user auth ---
+static int validate_password(const char *password);
+static int validate_username(const char *username);
 int startup_menu(UserList *users, UserHashTable *user_ht, User **current_user);
 void init_user_list(UserList *list);
 void init_user_hash(UserHashTable *ht);
@@ -121,13 +123,13 @@ int main(void)
     UserHashTable user_ht;
     User *current_user = NULL;
 
-    int_catalog(&catalog);
-    int_queue(&queue);
-    int_stack(&history);
-    int_hash_table(&ht);
-    int_cart(&cart);
-    int_user_list(&users);
-    int_user_hash(&user_ht);
+    init_catalog(&catalog);
+    init_queue(&queue);
+    init_stack(&history);
+    init_hash_table(&ht);
+    init_cart(&cart);
+    init_user_list(&users);
+    init_user_hash(&user_ht);
 
     seed_demo_users(&users, &user_ht);
     seed_demo_catalog(&catalog, &ht);
@@ -143,11 +145,11 @@ int main(void)
         {
             if (current_user->role == 'B')
             {
-                buyer_menu(&catalog, &queue, &cart, &history, &ht, current_user);
+                buyer_menu(&catalog, &queue, &cart, &history, &ht, &users, &user_ht, current_user);
             }
             else if (current_user->role == 'S')
             {
-                seller_menu(&catalog, &queue, &history, &ht, current_user);
+                seller_menu(&catalog, &queue, &history, &ht, &users, &user_ht, current_user);
             }
             current_user = NULL; /* on logout, return to startup */
         }
@@ -167,8 +169,8 @@ int main(void)
 
 void seed_demo_users(UserList *list, UserHashTable *ht)
 {
-    add_user(list, ht, "maria101", "654321", "Maria Santos", 'S');
-    add_user(list, ht, "gelo321", "090909", "Angelo Lorio", 'B');
+    add_user(list, ht, "maria101", "6543DF", "Maria Santos", 'S');
+    add_user(list, ht, "gelo321", "9090LA", "Angelo Lorio", 'B');
 }
 
 void seed_demo_catalog(Catalog *catalog, HashTable *ht)
@@ -714,6 +716,13 @@ int register_user(UserList *users, UserHashTable *ht, User **user)
         return 0;
     }
 
+    if (!validate_username(username))
+    {
+        printf("  [ERROR] Username must be at least 6 characters and contain both letters and numbers.\n");
+        printf("         Example: user123\n");
+        return 0;
+    }
+
     if (user_ht_lookup(ht, username) != NULL)
     {
         printf("  [ERROR] Username '%s' already exists.\n", username);
@@ -732,6 +741,13 @@ int register_user(UserList *users, UserHashTable *ht, User **user)
     if (strlen(password) == 0)
     {
         printf("  [ERROR] Password cannot be empty.\n");
+        return 0;
+    }
+
+    if (!validate_password(password))
+    {
+        printf("  [ERROR] Password must be at least 6 characters and contain both letters and numbers.\n");
+        printf("         Example: Password123\n");
         return 0;
     }
 
@@ -829,10 +845,128 @@ void free_user_data(UserList *list, UserHashTable *ht)
 }
 
 /* ============================================================
+   DELETE ACCOUNT FUNCTION
+   ============================================================ */
+int delete_account(UserList *users, UserHashTable *user_ht, User *user, Catalog *catalog)
+{
+    if (user == NULL)
+        return 0;
+
+    printf("\n");
+    printf("================================================================================\n");
+    printf("  WARNING: This action will permanently delete your account!\n");
+    printf("  - All your information will be removed\n");
+    if (user->role == 'S')
+        printf("  - All your product listings will be removed\n");
+    printf("  This action cannot be undone.\n");
+    printf("================================================================================\n");
+    printf("\n");
+    printf("  Enter your password to confirm account deletion: ");
+    
+    char password[50];
+    fgets(password, sizeof(password), stdin);
+    password[strcspn(password, "\n")] = '\0';
+    
+    if (strcmp(user->password, password) != 0)
+    {
+        printf("  [ERROR] Incorrect password. Account deletion cancelled.\n");
+        printf("  Press any key to continue...\n");
+        getchar();
+        return 0;
+    }
+
+    printf("  Type 'DELETE' to confirm: ");
+    char confirm[50];
+    fgets(confirm, sizeof(confirm), stdin);
+    confirm[strcspn(confirm, "\n")] = '\0';
+    trim_input(confirm);
+
+    if (strcasecmp(confirm, "DELETE") != 0)
+    {
+        printf("  Account deletion cancelled.\n");
+        printf("  Press any key to continue...\n");
+        getchar();
+        return 0;
+    }
+
+    /* Remove user's items from catalog if seller */
+    if (user->role == 'S')
+    {
+        Item *current = catalog->head;
+        while (current != NULL)
+        {
+            Item *next = current->next;
+            if ((strcasecmp(current->seller, user->username) == 0 ||
+                 strcasecmp(current->seller, user->display_name) == 0) &&
+                !current->is_sold)
+            {
+                current->is_sold = 1; /* Mark as sold/removed */
+            }
+            current = next;
+        }
+    }
+
+    /* Remove from UserHashTable */
+    int index = hash_category(user->username);
+    UserHashNode *current_node = user_ht->buckets[index];
+    UserHashNode *prev_node = NULL;
+
+    while (current_node != NULL)
+    {
+        if (strcasecmp(current_node->username, user->username) == 0)
+        {
+            if (prev_node != NULL)
+            {
+                prev_node->next = current_node->next;
+            }
+            else
+            {
+                user_ht->buckets[index] = current_node->next;
+            }
+            free(current_node);
+            break;
+        }
+        prev_node = current_node;
+        current_node = current_node->next;
+    }
+
+    /* Remove from UserList */
+    User *current_user = users->head;
+    User *prev_user = NULL;
+
+    while (current_user != NULL)
+    {
+        if (strcmp(current_user->username, user->username) == 0)
+        {
+            if (prev_user != NULL)
+            {
+                prev_user->next = current_user->next;
+            }
+            else
+            {
+                users->head = current_user->next;
+            }
+            free(current_user);
+            break;
+        }
+        prev_user = current_user;
+        current_user = current_user->next;
+    }
+
+    printf("\n");
+    printf("  [SUCCESS] Your account has been deleted successfully.\n");
+    printf("  You will be returned to the login screen.\n");
+    printf("  Press any key to continue...\n");
+    getchar();
+    
+    return 1; /* Signal to return to startup menu */
+}
+
+/* ============================================================
    MAIN MENU
    ============================================================ */
 void main_menu(Catalog *catalog, InquiryQueue *q,
-               TxStack *stack, HashTable *ht, ShoppingCart *cart, User *user)
+               TxStack *stack, HashTable *ht, ShoppingCart *cart, UserList *users, UserHashTable *user_ht, User *user)
 {
     int choice;
     const char *role_name = (user && user->role == 'S') ? "Seller" : "Buyer";
@@ -870,7 +1004,7 @@ void main_menu(Catalog *catalog, InquiryQueue *q,
         case 1:
             if (user->role == 'S')
             {
-                seller_menu(catalog, q, stack, ht, user);
+                seller_menu(catalog, q, stack, ht, users, user_ht, user);
             }
             else
             {
@@ -880,7 +1014,7 @@ void main_menu(Catalog *catalog, InquiryQueue *q,
         case 2:
             if (user->role == 'B')
             {
-                buyer_menu(catalog, q, cart, stack, ht, user);
+                buyer_menu(catalog, q, cart, stack, ht, users, user_ht, user);
             }
             else
             {
@@ -951,9 +1085,10 @@ int count_pending_orders_for_item(InquiryQueue *q, int item_id);
 Item *get_item_by_id_for_seller(Catalog *catalog, int item_id, const char *seller);
 void seller_view_incoming_orders(Catalog *catalog, TxStack *stack, User *user);
 void seller_sales_history(TxStack *stack, User *user);
+int delete_account(UserList *users, UserHashTable *user_ht, User *user, Catalog *catalog);
 
 void seller_menu(Catalog *catalog, InquiryQueue *q,
-                 TxStack *stack, HashTable *ht, User *user)
+                 TxStack *stack, HashTable *ht, UserList *users, UserHashTable *user_ht, User *user)
 {
     int choice;
 
@@ -965,7 +1100,8 @@ void seller_menu(Catalog *catalog, InquiryQueue *q,
         printf("  [2] View My Listings\n");
         printf("  [3] View Incoming Orders\n");
         printf("  [4] Sales History\n");
-        printf("  [5] Logout\n");
+        printf("  [5] Delete Account\n");
+        printf("  [6] Logout\n");
         printf("\n  Enter choice [0-Back]: ");
 
         if (scanf("%d", &choice) != 1)
@@ -998,6 +1134,14 @@ void seller_menu(Catalog *catalog, InquiryQueue *q,
         }
         else if (choice == 5)
         {
+    // --- Delete Account ---
+            if (delete_account(users, user_ht, user, catalog) == 1)
+            {
+                break; /* Account deleted, return to startup */
+            }
+        }
+        else if (choice == 6)
+        {
     // --- Logout ---
             printf("Are you sure you want to logout? (y/n): ");
             char confirm[10];
@@ -1017,7 +1161,7 @@ void seller_menu(Catalog *catalog, InquiryQueue *q,
         }
         else
         {
-            printf("  [ERROR] Invalid choice. Please select 1, 2, 3, 4, 5, or 0.\n");
+            printf("  [ERROR] Invalid choice. Please select 1, 2, 3, 4, 5, 6, or 0.\n");
             printf("  Press any key to continue...");
             getchar();
         }
@@ -2630,6 +2774,62 @@ static int validate_contact(const char *contact)
             return 0;
     }
     return 1;
+}
+
+static int validate_password(const char *password)
+{
+    /* Password requirements:
+       - Minimum 6 characters
+       - At least one letter (A-Z, a-z)
+       - At least one number (0-9)
+    */
+    if (!password)
+        return 0;
+
+    int len = strlen(password);
+    if (len < 6)
+        return 0; /* Too short */
+
+    int has_letter = 0;
+    int has_number = 0;
+
+    for (int i = 0; i < len; i++)
+    {
+        if (isalpha((unsigned char)password[i]))
+            has_letter = 1;
+        else if (isdigit((unsigned char)password[i]))
+            has_number = 1;
+    }
+
+    return (has_letter && has_number);
+}
+
+static int validate_username(const char *username)
+{
+    /* Username requirements (same as password):
+       - Minimum 6 characters
+       - At least one letter (A-Z, a-z)
+       - At least one number (0-9)
+    */
+    if (!username)
+        return 0;
+
+    int len = strlen(username);
+    if (len < 6)
+        return 0; /* Too short */
+
+    int has_letter = 0;
+    int has_number = 0;
+
+    for (int i = 0; i < len; i++)
+    {
+        if (isalpha((unsigned char)username[i]))
+            has_letter = 1;
+        else if (isdigit((unsigned char)username[i]))
+            has_number = 1;
+    }
+
+    return (has_letter && has_number);
 }
 
     // Check for duplicate item with same title by same seller
@@ -4504,7 +4704,7 @@ void browse_menu(Catalog *catalog);
 /* ============================================================
    BUYER MENU
    ============================================================ */
-void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *stack, HashTable *ht, User *user)
+void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *stack, HashTable *ht, UserList *users, UserHashTable *user_ht, User *user)
 {
     int choice;
     int browse_direct = 0;
@@ -4520,7 +4720,8 @@ void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *
             printf("  [3] View Cart\n");
             printf("  [4] My Orders / Transaction History\n");
             printf("  [5] View Category Index\n");
-            printf("  [6] Logout\n");
+            printf("  [6] Delete Account\n");
+            printf("  [7] Logout\n");
             printf("\n  Enter choice [0-Back]: ");
 
             if (scanf("%d", &choice) != 1)
@@ -5843,6 +6044,14 @@ void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *
         }
         else if (choice == 6)
         {
+    // --- Delete Account ---
+            if (delete_account(users, user_ht, user, catalog) == 1)
+            {
+                break; /* Account deleted, return to startup */
+            }
+        }
+        else if (choice == 7)
+        {
     // --- Logout ---
             printf("Are you sure you want to logout? (y/n): ");
             char confirm[10];
@@ -5854,6 +6063,11 @@ void buyer_menu(Catalog *catalog, InquiryQueue *q, ShoppingCart *cart, TxStack *
                     break;
                 }
             }
+        }
+        else if (choice == 0)
+        {
+    // --- Back to Main Menu ---
+            break;
         }
 
     } while (choice != 0);
