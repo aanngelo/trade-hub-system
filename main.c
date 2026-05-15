@@ -4568,9 +4568,131 @@ void display_items_by_subcategory(Catalog *catalog, ShoppingCart *cart, InquiryQ
         {
             return;
         }
-        if (strcasecmp(action, "S") == 0 || strcasecmp(action, "F") == 0)
+        else if (strcasecmp(action, "S") == 0)
         {
-            printf("  [INFO] Sort and filter are not available yet.\n");
+            printf("  [1] Price low to high\n");
+            printf("  [2] Price high to low\n");
+            printf("  [3] Name A-Z\n");
+            printf("  Enter sort option: ");
+
+            char sort_choice[16];
+            if (!fgets(sort_choice, sizeof(sort_choice), stdin))
+            {
+                continue;
+            }
+            sort_choice[strcspn(sort_choice, "\n")] = '\0';
+
+            if (strcmp(sort_choice, "1") == 0)
+            {
+                sort_display_items_by_price(items, item_count, 1);
+                printf("  [INFO] Results sorted by price (low to high).\n");
+            }
+            else if (strcmp(sort_choice, "2") == 0)
+            {
+                sort_display_items_by_price(items, item_count, 0);
+                printf("  [INFO] Results sorted by price (high to low).\n");
+            }
+            else if (strcmp(sort_choice, "3") == 0)
+            {
+                sort_display_items_by_name(items, item_count);
+                printf("  [INFO] Results sorted by product name.\n");
+            }
+            else
+            {
+                printf("  [ERROR] Invalid sort option.\n");
+            }
+            
+            // Re-display results after sorting
+            {
+                char category_title[128];
+                snprintf(category_title, sizeof(category_title), "CATEGORY: %s > %s", category, subcategory);
+                print_centered_header(category_title);
+            }
+            printf("  No.  ID      Product         Condition        Price        Seller            Contact\n");
+            printf("  ------------------------------------------------------------------------------\n");
+
+            for (int i = 0; i < item_count; i++)
+            {
+                printf("  [%2d]  %-6d  %-15s %-15s PHP %-8.2f %-15s %s\n",
+                       i + 1,
+                       items[i].id,
+                       items[i].product,
+                       items[i].condition,
+                       items[i].price,
+                       items[i].seller,
+                       items[i].contact);
+            }
+
+            printf("  ------------------------------------------------------------------------------\n");
+            printf("  %d result(s) found for \"%s\"\n", item_count, subcategory);
+            printf("================================================================================\n");
+            printf("                     [S] Sort   [F] Filter                                  \n");
+            printf("================================================================================\n");
+            continue;
+        }
+        else if (strcasecmp(action, "F") == 0)
+        {
+            printf("  Enter minimum price (PHP): ");
+            float min_price;
+            if (scanf("%f", &min_price) != 1)
+            {
+                clear_input_buffer();
+                printf("  [ERROR] Invalid minimum price.\n");
+                continue;
+            }
+            printf("  Enter maximum price (PHP): ");
+            float max_price;
+            if (scanf("%f", &max_price) != 1)
+            {
+                clear_input_buffer();
+                printf("  [ERROR] Invalid maximum price.\n");
+                continue;
+            }
+            clear_input_buffer();
+
+            DisplayItem filtered_results[1000];
+            int filtered_count = 1000;
+            int actual_filtered_count = filter_display_items_by_price(items, item_count, filtered_results, &filtered_count, min_price, max_price);
+
+            if (actual_filtered_count == 0)
+            {
+                printf("  [INFO] No items found in the price range PHP %.2f - PHP %.2f.\n", min_price, max_price);
+                continue;
+            }
+
+            // Update the items array with filtered results
+            for (int i = 0; i < actual_filtered_count; i++)
+            {
+                items[i] = filtered_results[i];
+            }
+            item_count = actual_filtered_count;
+
+            // Re-display filtered results
+            {
+                char category_title[128];
+                snprintf(category_title, sizeof(category_title), "CATEGORY: %s > %s (PHP %.2f - PHP %.2f)", category, subcategory, min_price, max_price);
+                print_centered_header(category_title);
+            }
+            printf("  No.  ID      Product         Condition        Price        Seller            Contact\n");
+            printf("  ------------------------------------------------------------------------------\n");
+
+            for (int i = 0; i < item_count; i++)
+            {
+                printf("  [%2d]  %-6d  %-15s %-15s PHP %-8.2f %-15s %s\n",
+                       i + 1,
+                       items[i].id,
+                       items[i].product,
+                       items[i].condition,
+                       items[i].price,
+                       items[i].seller,
+                       items[i].contact);
+            }
+
+            printf("  ------------------------------------------------------------------------------\n");
+            printf("  %d item(s) found in price range PHP %.2f - PHP %.2f.\n", item_count, min_price, max_price);
+            printf("================================================================================\n");
+            printf("                     [S] Sort   [F] Filter                                  \n");
+            printf("================================================================================\n");
             continue;
         }
 
