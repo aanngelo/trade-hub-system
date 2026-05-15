@@ -4,19 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* ============================================================
-   hash.c — Trade Hub System
-   DATA STRUCTURE : Hash Table (with chaining)
-   Provides O(1) average-case category lookups.
-   WHY HASH TABLE: Faster than scanning the full linked list
-                   when browsing a specific category.
-   ============================================================ */
+/* WHY HASH TABLE: Faster than scanning the full linked list when browsing a specific category. */
 
-/* ----------------------------------------------------------
-   hash_category  [HASH FUNCTION]
-   Maps a category string to a bucket index using djb2.
-   Always returns a value in range [0, TABLE_SIZE - 1].
-   ---------------------------------------------------------- */
 int hash_category(const char *category) {
     unsigned long hash = 5381;
     int c;

@@ -3,26 +3,12 @@
 #include <string.h>
 #include "queue.h"
 
-// ============================================================
-// queue.c â€” Trade Hub System
-// DATA STRUCTURE : Queue (FIFO â€” Linked List based)
-// Manages buyer inquiries for item listings.
-// WHY QUEUE: Buyers are served in order they inquired â€”
-// first come, first served. Fair for all buyers.
-// ============================================================
-
-// init_queue
-// Sets up an empty inquiry queue.
 void init_queue(InquiryQueue *q) {
     q->front = NULL;
     q->rear  = NULL;
     q->count = 0;
 }
 
-// enqueue_inquiry
-// Adds a new buyer inquiry to the REAR of the queue.
-// This is the "join the line" operation. O(1).
-// Returns 1 on success, 0 on failure.
 int enqueue_inquiry(InquiryQueue *q, int item_id,
                     const char *buyer_name,
                     const char *buyer_contact,
@@ -57,10 +43,6 @@ int enqueue_inquiry(InquiryQueue *q, int item_id,
     return 1;
 }
 
-// dequeue_inquiry
-// Removes and returns the FRONT node (next buyer to serve).
-// Caller is responsible for freeing the returned node.
-// Returns NULL if queue is empty.
 InquiryNode *dequeue_inquiry(InquiryQueue *q) {
     if (is_queue_empty(q)) {
         printf("[INFO] No pending inquiries.\n");
@@ -81,9 +63,6 @@ InquiryNode *dequeue_inquiry(InquiryQueue *q) {
     return served;
 }
 
-// peek_inquiry
-// Returns the front inquiry WITHOUT removing it.
-// Returns NULL if queue is empty.
 InquiryNode *peek_inquiry(InquiryQueue *q) {
     if (is_queue_empty(q)) {
         printf("[INFO] No pending inquiries.\n");

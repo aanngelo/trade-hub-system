@@ -4,26 +4,12 @@
 #include "stack.h"
 #include "utils.h"
 
-// ============================================================
-// stack.c â€” Trade Hub System
-// DATA STRUCTURE : Stack (LIFO â€” Linked List based)
-// Records all trade transactions in the system.
-// WHY STACK: The most recent transaction is most relevant â€”
-// LIFO naturally shows newest activity first.
-// ============================================================
-
-// init_stack
-// Sets up an empty transaction stack.
 void init_stack(TxStack *stack)
 {
     stack->top = NULL;
     stack->count = 0;
 }
 
-// push_transaction
-// Records a new trade by pushing a TxNode onto the TOP
-// of the stack. O(1) insertion.
-// Status should be "completed" or "cancelled".
 int push_transaction(TxStack *stack,
                      int order_id,
                      int item_id,
@@ -81,10 +67,7 @@ int push_transaction(TxStack *stack,
     return 1;
 }
 
-// pop_transaction
-// Removes and returns the TOP (most recent) transaction.
-// Caller must free the returned node after use.
-// Returns NULL if stack is empty.
+
 TxNode *pop_transaction(TxStack *stack)
 {
     if (is_stack_empty(stack))
@@ -101,10 +84,7 @@ TxNode *pop_transaction(TxStack *stack)
     return popped;
 }
 
-// peek_transaction
-// Returns the TOP node without removing it.
-// Useful to display the most recent transaction.
-// Returns NULL if stack is empty.
+
 TxNode *peek_transaction(TxStack *stack)
 {
     if (is_stack_empty(stack))
@@ -115,9 +95,7 @@ TxNode *peek_transaction(TxStack *stack)
     return stack->top;
 }
 
-// display_history
-// Prints all transactions from most recent to oldest
-// by traversing from top to bottom of the stack.
+
 void display_history(TxStack *stack)
 {
     if (is_stack_empty(stack))

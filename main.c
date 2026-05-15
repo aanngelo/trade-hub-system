@@ -38,9 +38,6 @@ typedef struct UserHashTable
 } UserHashTable;
 
 /* ============================================================
-   main.c — Trade Hub System
-   Entry point. Manages menus and ties all modules together.
-
    DATA STRUCTURES USED:
      - Linked List  (catalog.c) — item listings
      - Queue        (queue.c)   — buyer inquiries

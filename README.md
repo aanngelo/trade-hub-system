@@ -1,6 +1,6 @@
 # Trade Hub System
 ---
-Trade Hub is a console-based marketplace system designed for students who need a simple and organized way to buy and sell school items within their campus community. Instead of looking for buyers or sellers one by one, students can use Trade Hub as a single place where they can post items they want to sell or look for items they need to buy. It covers common school items such as uniforms, books, notebooks, and other academic supplies. The goal of Trade Hub is to make student-to-student trading more convenient, organized, and accessible for everyone in the campus.
+Trade Hub is a marketplace system designed for students who need a simple and organized way to buy and sell school items within their campus community. Instead of looking for buyers or sellers one by one, students can use Trade Hub as a single place where they can post items they want to sell or look for items they need to buy. It covers common school items such as uniforms, books, notebooks, and other academic supplies. The goal of Trade Hub is to make student-to-student trading more convenient, organized, and accessible for everyone in the campus.
 
 ---
 

@@ -5,10 +5,7 @@
 #include <ctype.h>
 #include "utils.h"
 
-// ============================================================
-// utils.c â€” Trade Hub System
-// Utility / helper function implementations
-// ============================================================
+// Utility / helper function implementations.
 
 // Static counter for generating unique item IDs
 static int id_counter = 5000;

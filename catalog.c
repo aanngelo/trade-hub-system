@@ -5,7 +5,7 @@
 #include "utils.h"
 
 // ============================================================
-// catalog.c â€” Trade Hub System
+// catalog.c — Trade Hub System
 // DATA STRUCTURE : Singly Linked List
 // Manages all posted item listings.
 // ALGORITHMS     : Linear Search, Binary Search,

@@ -8,19 +8,17 @@
 #include <string.h>
 #include <time.h>
 
-/* ============================================================
-   cart.c — Trade Hub System
-   Cart: shopping cart for selected items implementation
-   ============================================================ */
+/* cart.c — Trade Hub System
+   Cart: shopping cart for selected items implementation */
 
-    // --- Initialize an empty shopping cart ---
+    //Initialize an empty shopping cart.
 void init_cart(ShoppingCart *cart) {
     cart->head = NULL;
     cart->count = 0;
     cart->total = 0.0f;
 }
 
-    // --- Add an item to the shopping cart ---
+    // Add an item to the shopping cart.
 int add_to_cart(ShoppingCart *cart, int item_id, const char *item_title,
                 const char *condition, const char *seller, const char *contact,
                 const char *buyer_username, float price, int quantity) {
